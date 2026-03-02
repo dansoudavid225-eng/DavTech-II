@@ -1,0 +1,1532 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>DavTech II — Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+/* ═══════════════════════════════════════════════════════════
+   DAVTECH II — ADMIN PANEL COMPLET
+   Firebase Auth + Firestore + Gestion totale du site
+═══════════════════════════════════════════════════════════ */
+:root {
+  --y:#f5c518;--y2:#ffe566;--y3:rgba(245,197,24,0.1);
+  --bg:#080810;--bg2:#0d0d1a;--bg3:#12121f;--bg4:#1a1a2e;--bg5:#20203a;
+  --text:#e8e8f0;--text2:#7a7a9a;--text3:#aaaacc;
+  --border:rgba(255,255,255,0.05);--border2:rgba(245,197,24,0.2);
+  --green:#00e5a0;--red:#ff4d6d;--blue:#4d9fff;--cyan:#00d4ff;--purple:#9d4edd;
+  --r:10px;--t:all 0.2s ease;
+  --font:'Space Grotesk',sans-serif;--mono:'Space Mono',monospace;
+  --shadow:0 8px 32px rgba(0,0,0,0.4);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;border:none;font-family:var(--font)}
+input,select,textarea{font-family:var(--font)}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--y);border-radius:4px}
+
+/* GRID BG */
+body::before{content:'';position:fixed;inset:0;
+  background-image:linear-gradient(rgba(245,197,24,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(245,197,24,0.02) 1px,transparent 1px);
+  background-size:40px 40px;pointer-events:none;z-index:0}
+
+/* ═══ LOGIN ═══ */
+.login-screen{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  position:relative;z-index:1;
+  background:radial-gradient(ellipse 60% 50% at 50% 40%,rgba(245,197,24,0.07) 0%,transparent 70%);
+}
+.login-box{
+  background:var(--bg3);border:1px solid var(--border2);border-radius:20px;
+  padding:48px 40px;width:100%;max-width:400px;text-align:center;
+  box-shadow:0 0 80px rgba(245,197,24,0.06),0 40px 80px rgba(0,0,0,0.5);position:relative
+}
+.login-box::before{content:'';position:absolute;top:-1px;left:15%;right:15%;height:1px;
+  background:linear-gradient(90deg,transparent,var(--y),transparent)}
+.login-icon{width:68px;height:68px;background:var(--y3);border:1px solid var(--border2);border-radius:16px;
+  display:flex;align-items:center;justify-content:center;font-size:1.7rem;color:var(--y);
+  margin:0 auto 22px;box-shadow:0 0 30px rgba(245,197,24,0.15)}
+.login-title{font-size:1.9rem;font-weight:700;color:var(--y);letter-spacing:3px;margin-bottom:4px}
+.login-sub{font-size:.72rem;color:var(--text2);font-family:var(--mono);letter-spacing:2px;
+  text-transform:uppercase;margin-bottom:32px}
+.l-group{margin-bottom:14px;text-align:left}
+.l-group label{display:block;font-size:.7rem;font-weight:600;color:var(--text2);
+  text-transform:uppercase;letter-spacing:.1em;margin-bottom:7px}
+.l-group input{
+  width:100%;background:var(--bg4);border:1px solid rgba(255,255,255,.06);
+  color:var(--text);padding:13px 16px;border-radius:var(--r);font-size:.9rem;
+  transition:var(--t);outline:none}
+.l-group input:focus{border-color:var(--y);background:var(--bg5);box-shadow:0 0 0 3px rgba(245,197,24,0.08)}
+.l-group input::placeholder{color:var(--text2)}
+.login-btn{
+  width:100%;padding:14px;margin-top:6px;
+  background:linear-gradient(135deg,var(--y),#e6b800);
+  color:#080810;font-size:.95rem;font-weight:700;border-radius:var(--r);
+  transition:var(--t);letter-spacing:1px;text-transform:uppercase;
+  box-shadow:0 4px 20px rgba(245,197,24,0.25)}
+.login-btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(245,197,24,0.35)}
+.login-btn:disabled{opacity:.5;pointer-events:none}
+.login-err{color:var(--red);font-size:.8rem;margin-top:12px;min-height:20px;font-family:var(--mono)}
+.login-loading{display:flex;align-items:center;justify-content:center;gap:8px;color:var(--text2);font-size:.8rem}
+
+/* ═══ APP LAYOUT ═══ */
+.app{display:none;min-height:100vh;position:relative;z-index:1}
+.app.on{display:flex}
+
+/* ═══ SIDEBAR ═══ */
+.sidebar{
+  width:240px;min-height:100vh;
+  background:var(--bg2);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;
+  z-index:100;transition:transform .25s ease;overflow-y:auto}
+.sidebar-logo{padding:22px 18px 18px;border-bottom:1px solid var(--border);flex-shrink:0}
+.s-brand{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+.s-icon{width:34px;height:34px;background:var(--y3);border:1px solid var(--border2);
+  border-radius:8px;display:flex;align-items:center;justify-content:center;
+  color:var(--y);font-size:.9rem;flex-shrink:0}
+.s-name{font-size:1.1rem;font-weight:700;color:var(--y);letter-spacing:2px}
+.s-ver{font-size:.6rem;color:var(--text2);font-family:var(--mono);letter-spacing:.12em;
+  text-transform:uppercase;margin-left:44px}
+.sidebar-nav{flex:1;padding:14px 0}
+.nav-cat{padding:10px 18px 4px;font-size:.6rem;color:var(--text2);
+  text-transform:uppercase;letter-spacing:.15em;font-family:var(--mono)}
+.ni{
+  display:flex;align-items:center;gap:10px;padding:9px 18px;
+  font-size:.82rem;font-weight:500;color:var(--text3);cursor:pointer;
+  transition:var(--t);border-left:2px solid transparent;position:relative}
+.ni:hover{color:var(--text);background:rgba(255,255,255,0.03)}
+.ni.active{color:var(--y);background:rgba(245,197,24,0.06);border-left-color:var(--y)}
+.ni i{width:16px;text-align:center;font-size:.8rem}
+.ni-badge{margin-left:auto;background:var(--red);color:#fff;font-size:.6rem;
+  font-weight:700;padding:2px 7px;border-radius:50px;font-family:var(--mono)}
+.ni-badge.green{background:var(--green);color:#000}
+.sidebar-footer{padding:14px 18px;border-top:1px solid var(--border)}
+.s-user{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.s-avatar{width:32px;height:32px;border-radius:50%;background:var(--y);
+  display:flex;align-items:center;justify-content:center;color:#000;font-size:.8rem;font-weight:700}
+.s-uname{font-size:.78rem;font-weight:600}
+.s-uemail{font-size:.66rem;color:var(--text2);font-family:var(--mono)}
+.btn-logout{width:100%;padding:8px 12px;background:rgba(255,77,109,0.1);
+  border:1px solid rgba(255,77,109,0.2);color:var(--red);font-size:.75rem;
+  font-weight:600;border-radius:8px;transition:var(--t);display:flex;
+  align-items:center;justify-content:center;gap:7px}
+.btn-logout:hover{background:rgba(255,77,109,0.2)}
+
+/* ═══ MAIN ═══ */
+.main{margin-left:240px;flex:1;display:flex;flex-direction:column;min-height:100vh}
+.topbar{
+  display:flex;align-items:center;gap:14px;padding:16px 28px;
+  border-bottom:1px solid var(--border);background:var(--bg2);
+  position:sticky;top:0;z-index:90}
+.topbar-toggle{display:none;width:34px;height:34px;align-items:center;justify-content:center;
+  background:var(--bg4);border-radius:8px;color:var(--text3);cursor:pointer;border:1px solid var(--border)}
+#pageTitle{font-size:1.25rem;font-weight:700;flex:1}
+#pageTitle span{color:var(--y)}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.tb-btn{width:34px;height:34px;display:flex;align-items:center;justify-content:center;
+  background:var(--bg4);border-radius:8px;color:var(--text3);cursor:pointer;
+  border:1px solid var(--border);transition:var(--t);font-size:.8rem}
+.tb-btn:hover{color:var(--y);border-color:var(--border2)}
+.tb-time{font-size:.72rem;color:var(--text2);font-family:var(--mono)}
+
+.content{flex:1;padding:28px}
+
+/* ═══ PANELS ═══ */
+.panel{display:none}
+.panel.active{display:block}
+
+/* ═══ CARDS / WIDGETS ═══ */
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-bottom:20px}
+.stat-card{
+  background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);
+  padding:20px;position:relative;overflow:hidden;transition:var(--t)}
+.stat-card:hover{border-color:var(--border2)}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:var(--accent,var(--y))}
+.stat-card .sc-ico{width:40px;height:40px;background:rgba(255,255,255,.04);
+  border-radius:9px;display:flex;align-items:center;justify-content:center;
+  font-size:1rem;color:var(--accent,var(--y));margin-bottom:14px}
+.stat-card .sc-val{font-size:1.9rem;font-weight:700;line-height:1;margin-bottom:4px;font-family:var(--mono)}
+.stat-card .sc-lbl{font-size:.72rem;color:var(--text2);text-transform:uppercase;letter-spacing:.1em}
+.stat-card .sc-trend{position:absolute;bottom:16px;right:16px;font-size:.7rem;font-family:var(--mono);
+  padding:3px 8px;border-radius:50px}
+.stat-card .sc-trend.up{background:rgba(0,229,160,.1);color:var(--green)}
+.stat-card .sc-trend.down{background:rgba(255,77,109,.1);color:var(--red)}
+
+.card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:22px;margin-bottom:20px}
+.card-title{font-size:.82rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--text2);margin-bottom:18px;display:flex;align-items:center;gap:8px}
+.card-title i{color:var(--y)}
+.card-title span.badge{margin-left:auto;background:var(--y3);color:var(--y);
+  font-size:.65rem;padding:2px 9px;border-radius:50px;border:1px solid var(--border2)}
+
+/* ═══ FORM ELEMENTS ═══ */
+.fg{margin-bottom:16px}
+.fg label{display:block;font-size:.72rem;font-weight:600;color:var(--text2);
+  text-transform:uppercase;letter-spacing:.08em;margin-bottom:7px}
+.fg input,.fg select,.fg textarea{
+  width:100%;background:var(--bg4);border:1px solid rgba(255,255,255,.06);
+  color:var(--text);padding:11px 14px;border-radius:8px;font-size:.85rem;
+  transition:var(--t);outline:none;resize:vertical}
+.fg input:focus,.fg select:focus,.fg textarea:focus{
+  border-color:var(--y);background:var(--bg5);box-shadow:0 0 0 3px rgba(245,197,24,0.07)}
+.fg textarea{min-height:90px}
+.fg input::placeholder,.fg textarea::placeholder{color:var(--text2)}
+.fg2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.fg select option{background:var(--bg4)}
+
+/* ═══ BUTTONS ═══ */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;
+  font-family:var(--font);font-size:.82rem;font-weight:600;border-radius:8px;
+  cursor:pointer;transition:var(--t);border:none}
+.btn-y{background:var(--y);color:#000}
+.btn-y:hover{background:var(--y2)}
+.btn-y:disabled{opacity:.4;pointer-events:none}
+.btn-ghost{background:rgba(255,255,255,.04);color:var(--text3);border:1px solid var(--border)}
+.btn-ghost:hover{color:var(--text);background:rgba(255,255,255,.07)}
+.btn-red{background:rgba(255,77,109,.12);color:var(--red);border:1px solid rgba(255,77,109,.2)}
+.btn-red:hover{background:rgba(255,77,109,.22)}
+.btn-cyan{background:rgba(0,212,255,.1);color:var(--cyan);border:1px solid rgba(0,212,255,.2)}
+.btn-cyan:hover{background:rgba(0,212,255,.18)}
+.btn-green{background:rgba(0,229,160,.1);color:var(--green);border:1px solid rgba(0,229,160,.2)}
+.btn-green:hover{background:rgba(0,229,160,.18)}
+.btn-sm{padding:6px 12px;font-size:.74rem}
+.btn-lg{padding:12px 24px;font-size:.9rem}
+.btn-spin{display:none}
+.saving .btn-spin{display:inline}
+.saving .btn-label{display:none}
+
+/* ═══ TABLES ═══ */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;padding:10px 14px;font-size:.66rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:.12em;color:var(--text2);
+  border-bottom:1px solid var(--border)}
+td{padding:12px 14px;font-size:.82rem;border-bottom:1px solid rgba(255,255,255,.03);
+  vertical-align:top}
+tr:hover td{background:rgba(255,255,255,.02)}
+.td-badge{display:inline-flex;align-items:center;gap:5px;font-size:.66rem;
+  padding:3px 9px;border-radius:50px;font-weight:600;font-family:var(--mono)}
+.td-badge.unread{background:rgba(245,197,24,.12);color:var(--y);border:1px solid rgba(245,197,24,.2)}
+.td-badge.read{background:rgba(255,255,255,.05);color:var(--text2);border:1px solid var(--border)}
+.td-badge.new{background:rgba(0,229,160,.1);color:var(--green);border:1px solid rgba(0,229,160,.2)}
+.td-badge.sent{background:rgba(77,159,255,.1);color:var(--blue);border:1px solid rgba(77,159,255,.2)}
+
+/* ═══ MESSAGES ═══ */
+.msg-list{display:flex;flex-direction:column;gap:10px}
+.msg-item{
+  background:var(--bg4);border:1px solid var(--border);border-radius:var(--r);
+  padding:16px 18px;cursor:pointer;transition:var(--t);
+  display:flex;align-items:flex-start;gap:14px}
+.msg-item:hover{border-color:var(--border2);background:var(--bg5)}
+.msg-item.unread{border-left:3px solid var(--y)}
+.msg-item.unread .msg-from{color:var(--text)}
+.msg-avatar{width:38px;height:38px;border-radius:50%;background:var(--y);
+  display:flex;align-items:center;justify-content:center;color:#000;
+  font-size:.85rem;font-weight:700;flex-shrink:0;text-transform:uppercase}
+.msg-body{flex:1;min-width:0}
+.msg-from{font-size:.85rem;font-weight:600;color:var(--text3)}
+.msg-email{font-size:.72rem;color:var(--text2);font-family:var(--mono)}
+.msg-preview{font-size:.8rem;color:var(--text2);margin-top:4px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.msg-meta{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0}
+.msg-time{font-size:.66rem;color:var(--text2);font-family:var(--mono)}
+.msg-actions{display:flex;gap:6px}
+
+/* MSG DETAIL */
+.msg-detail{
+  background:var(--bg4);border:1px solid var(--border2);border-radius:var(--r);
+  padding:22px;margin-top:14px;display:none}
+.msg-detail.open{display:block}
+.msg-d-hd{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;flex-wrap:wrap;gap:10px}
+.msg-d-info{}
+.msg-d-name{font-size:1rem;font-weight:700}
+.msg-d-email{font-size:.78rem;color:var(--text2);font-family:var(--mono)}
+.msg-d-meta{font-size:.72rem;color:var(--text3);margin-top:4px}
+.msg-d-body{background:var(--bg3);border-radius:8px;padding:16px;
+  font-size:.85rem;line-height:1.7;color:var(--text3);margin-bottom:16px;
+  border:1px solid var(--border)}
+.msg-d-reply{margin-top:10px}
+.msg-d-reply textarea{
+  width:100%;min-height:80px;background:var(--bg3);border:1px solid var(--border);
+  color:var(--text);padding:12px;border-radius:8px;font-size:.82rem;
+  resize:vertical;outline:none;transition:var(--t)}
+.msg-d-reply textarea:focus{border-color:var(--y)}
+.msg-d-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+
+/* ═══ SKILL EDITOR ═══ */
+.skill-ed-item{display:flex;align-items:center;gap:10px;margin-bottom:10px;
+  background:var(--bg4);padding:10px 12px;border-radius:8px;border:1px solid var(--border)}
+.skill-ed-item input{flex:1;background:transparent;border:none;color:var(--text);
+  font-size:.84rem;outline:none;padding:2px 4px}
+.skill-ed-item input.pct{flex:0 0 55px;color:var(--y);text-align:center;font-family:var(--mono)}
+.skill-ed-item button{color:var(--red);font-size:.75rem;padding:4px 8px;
+  background:rgba(255,77,109,.1);border-radius:6px;border:none;cursor:pointer}
+.skill-ed-item button:hover{background:rgba(255,77,109,.2)}
+
+/* ═══ SAVE CONFIRM ═══ */
+.c-mark{display:none;color:var(--green);font-size:.75rem;font-family:var(--mono);
+  align-items:center;gap:5px;animation:fadeIn .3s}
+.c-mark.show{display:inline-flex}
+@keyframes fadeIn{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
+
+/* ═══ NOTIF TOAST ═══ */
+#notifToast{
+  position:fixed;bottom:24px;right:24px;z-index:9999;
+  background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);
+  padding:14px 20px;font-size:.82rem;font-weight:600;
+  box-shadow:0 8px 32px rgba(0,0,0,.5);transform:translateY(100px);opacity:0;
+  transition:all .3s ease;pointer-events:none;display:flex;align-items:center;gap:9px;
+  max-width:320px}
+#notifToast.show{transform:translateY(0);opacity:1}
+#notifToast.ok{border-color:rgba(0,229,160,.3);color:var(--green)}
+#notifToast.err{border-color:rgba(255,77,109,.3);color:var(--red)}
+#notifToast.info{border-color:var(--border2);color:var(--y)}
+
+/* ═══ SECTION TAGS ═══ */
+.section-divider{
+  height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);
+  margin:28px 0}
+
+/* ═══ COLOR PICKER ═══ */
+.color-preview{width:32px;height:32px;border-radius:6px;border:1px solid var(--border);cursor:pointer;flex-shrink:0}
+.color-row{display:flex;align-items:center;gap:12px}
+.color-hex{font-size:.75rem;font-family:var(--mono);color:var(--text2)}
+
+/* ═══ REALISATION EDITOR ═══ */
+.real-block{background:var(--bg4);border:1px solid var(--border);
+  border-radius:var(--r);padding:16px;margin-bottom:12px;position:relative}
+.real-block-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.real-block-hd h4{font-size:.78rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:.1em;color:var(--text2);display:flex;align-items:center;gap:7px}
+
+/* ═══ TIMELINE EDITOR ═══ */
+.tl-block{background:var(--bg4);border:1px solid var(--border);
+  border-radius:var(--r);padding:14px;margin-bottom:10px}
+.tl-block-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+
+/* ═══ CYBER CARDS EDITOR ═══ */
+.cy-block{background:var(--bg4);border:1px solid rgba(0,212,255,.1);
+  border-radius:var(--r);padding:14px;margin-bottom:10px}
+
+/* ═══ PROGRESS BAR ═══ */
+.pbar{height:4px;background:var(--bg5);border-radius:4px;overflow:hidden;margin-top:6px}
+.pbar-fill{height:100%;background:linear-gradient(90deg,var(--y),var(--y2));
+  border-radius:4px;transition:width .5s ease}
+
+/* ═══ SWITCH TOGGLE ═══ */
+.switch{position:relative;display:inline-block;width:42px;height:22px}
+.switch input{opacity:0;width:0;height:0}
+.slider{position:absolute;cursor:pointer;inset:0;background:var(--bg5);
+  border-radius:22px;transition:.3s;border:1px solid var(--border)}
+.slider::before{content:'';position:absolute;height:16px;width:16px;
+  left:2px;bottom:2px;background:var(--text2);border-radius:50%;transition:.3s}
+input:checked+.slider{background:rgba(245,197,24,.2);border-color:var(--border2)}
+input:checked+.slider::before{transform:translateX(20px);background:var(--y)}
+
+/* ═══ HIGHLIGHT EDITOR ═══ */
+.hl-block{background:var(--bg4);border:1px solid var(--border);border-radius:8px;
+  padding:12px;margin-bottom:9px;display:flex;gap:10px;align-items:center}
+.hl-block input{background:var(--bg5);border:1px solid var(--border);color:var(--text);
+  padding:8px 10px;border-radius:6px;font-size:.8rem;outline:none;transition:var(--t);flex:1}
+.hl-block input:focus{border-color:var(--y)}
+
+/* ═══ OVERLAY / MODAL ═══ */
+.overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;
+  display:none;align-items:center;justify-content:center;padding:20px}
+.overlay.open{display:flex}
+.modal{background:var(--bg3);border:1px solid var(--border2);border-radius:16px;
+  padding:28px;width:100%;max-width:520px;
+  box-shadow:0 20px 60px rgba(0,0,0,.6);position:relative}
+.modal-close{position:absolute;top:14px;right:14px;width:28px;height:28px;
+  display:flex;align-items:center;justify-content:center;background:var(--bg4);
+  border-radius:6px;cursor:pointer;color:var(--text2);font-size:.8rem;
+  transition:var(--t)}
+.modal-close:hover{color:var(--text)}
+.modal-title{font-size:1rem;font-weight:700;margin-bottom:18px}
+
+/* ═══ PWD STRENGTH ═══ */
+.pwd-strength{height:3px;border-radius:3px;background:var(--bg5);margin-top:6px;overflow:hidden}
+.pwd-fill{height:100%;width:0;border-radius:3px;transition:width .3s,background .3s}
+
+/* ═══ EMPTY STATE ═══ */
+.empty{text-align:center;padding:40px;color:var(--text2)}
+.empty i{font-size:2.5rem;color:var(--border);margin-bottom:12px}
+.empty p{font-size:.85rem}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:960px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}
+  .topbar-toggle{display:flex}
+  .grid-4{grid-template-columns:1fr 1fr}
+  .fg2,.fg3{grid-template-columns:1fr}
+  .grid-2,.grid-3{grid-template-columns:1fr}
+}
+@media(max-width:540px){
+  .grid-4{grid-template-columns:1fr}
+  .content{padding:16px}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ LOGIN SCREEN ═══ -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-box">
+    <div class="login-icon"><i class="fa-solid fa-bolt"></i></div>
+    <div class="login-title">DAVTECH II</div>
+    <div class="login-sub">Admin Panel · Accès Sécurisé</div>
+    <div class="l-group">
+      <label>Email</label>
+      <input type="email" id="loginEmail" placeholder="admin@davtech.fr" autocomplete="email"/>
+    </div>
+    <div class="l-group">
+      <label>Mot de passe</label>
+      <input type="password" id="loginPwd" placeholder="••••••••" autocomplete="current-password"/>
+    </div>
+    <button class="login-btn" id="loginBtn" onclick="doLogin()">
+      <i class="fa-solid fa-right-to-bracket"></i> Connexion
+    </button>
+    <div class="login-err" id="loginErr"></div>
+  </div>
+</div>
+
+<!-- ═══ APP ═══ -->
+<div class="app" id="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="s-brand">
+        <div class="s-icon"><i class="fa-solid fa-bolt"></i></div>
+        <div class="s-name">DAVTECH</div>
+      </div>
+      <div class="s-ver">Admin Panel v2.0</div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-cat">Vue générale</div>
+      <div class="ni active" onclick="showPanel('dashboard',this)"><i class="fa-solid fa-gauge-high"></i> Tableau de bord</div>
+      <div class="ni" onclick="showPanel('messages',this)"><i class="fa-solid fa-envelope"></i> Messages <span class="ni-badge" id="badge-msgs">0</span></div>
+
+      <div class="nav-cat">Contenu du site</div>
+      <div class="ni" onclick="showPanel('hero',this)"><i class="fa-solid fa-house"></i> Hero / Accueil</div>
+      <div class="ni" onclick="showPanel('profil',this)"><i class="fa-solid fa-user"></i> Mon Profil</div>
+      <div class="ni" onclick="showPanel('services',this)"><i class="fa-solid fa-bolt"></i> Services</div>
+      <div class="ni" onclick="showPanel('competences',this)"><i class="fa-solid fa-chart-bar"></i> Compétences</div>
+      <div class="ni" onclick="showPanel('realisations',this)"><i class="fa-solid fa-star"></i> Réalisations</div>
+      <div class="ni" onclick="showPanel('cybersec',this)"><i class="fa-solid fa-shield-halved"></i> Cybersécurité</div>
+
+      <div class="nav-cat">Paramètres</div>
+      <div class="ni" onclick="showPanel('contact',this)"><i class="fa-solid fa-phone"></i> Contact & Infos</div>
+      <div class="ni" onclick="showPanel('apparence',this)"><i class="fa-solid fa-palette"></i> Apparence</div>
+      <div class="ni" onclick="showPanel('securite',this)"><i class="fa-solid fa-lock"></i> Sécurité</div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="s-user">
+        <div class="s-avatar" id="s-av">D</div>
+        <div>
+          <div class="s-uname" id="s-uname">Admin</div>
+          <div class="s-uemail" id="s-uemail">—</div>
+        </div>
+      </div>
+      <button class="btn-logout" onclick="doLogout()"><i class="fa-solid fa-right-from-bracket"></i> Déconnexion</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="topbar">
+      <div class="topbar-toggle" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></div>
+      <div id="pageTitle">Tableau de <span>bord</span></div>
+      <div class="topbar-right">
+        <div class="tb-time" id="tb-clock"></div>
+        <a href="index.html" target="_blank" class="tb-btn" title="Voir le site"><i class="fa-solid fa-external-link"></i></a>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- ═══ DASHBOARD ═══ -->
+      <div class="panel active" id="panel-dashboard">
+        <div class="grid-4">
+          <div class="stat-card" style="--accent:var(--y)">
+            <div class="sc-ico"><i class="fa-solid fa-envelope"></i></div>
+            <div class="sc-val" id="dash-msgs">—</div>
+            <div class="sc-lbl">Messages reçus</div>
+          </div>
+          <div class="stat-card" style="--accent:var(--red)">
+            <div class="sc-ico" style="color:var(--red)"><i class="fa-solid fa-envelope-open"></i></div>
+            <div class="sc-val" id="dash-unread">—</div>
+            <div class="sc-lbl">Non lus</div>
+          </div>
+          <div class="stat-card" style="--accent:var(--green)">
+            <div class="sc-ico" style="color:var(--green)"><i class="fa-solid fa-star"></i></div>
+            <div class="sc-val" id="dash-reals">—</div>
+            <div class="sc-lbl">Réalisations</div>
+          </div>
+          <div class="stat-card" style="--accent:var(--cyan)">
+            <div class="sc-ico" style="color:var(--cyan)"><i class="fa-solid fa-tools"></i></div>
+            <div class="sc-val" id="dash-svcs">—</div>
+            <div class="sc-lbl">Services</div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title"><i class="fa-solid fa-envelope"></i> Derniers messages <span class="badge" id="dash-recent-count">0</span></div>
+            <div id="dash-recent-msgs"><div class="empty"><i class="fa-solid fa-inbox"></i><p>Aucun message</p></div></div>
+          </div>
+          <div class="card">
+            <div class="card-title"><i class="fa-solid fa-info-circle"></i> Informations du site</div>
+            <div id="dash-site-info" style="font-size:.83rem;line-height:2.2;color:var(--text3)">Chargement...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ MESSAGES ═══ -->
+      <div class="panel" id="panel-messages">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px">
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-y btn-sm" onclick="filterMsgs('all')" id="filt-all">Tous</button>
+            <button class="btn btn-ghost btn-sm" onclick="filterMsgs('unread')" id="filt-unread">Non lus</button>
+            <button class="btn btn-ghost btn-sm" onclick="filterMsgs('read')" id="filt-read">Lus</button>
+          </div>
+          <button class="btn btn-red btn-sm" onclick="deleteAllRead()"><i class="fa-solid fa-trash"></i> Supprimer lus</button>
+        </div>
+        <div id="msgs-container"><div class="empty"><i class="fa-solid fa-inbox"></i><p>Chargement des messages...</p></div></div>
+        <div class="msg-detail" id="msgDetail"></div>
+      </div>
+
+      <!-- ═══ HERO ═══ -->
+      <div class="panel" id="panel-hero">
+        <div class="card">
+          <div class="card-title"><i class="fa-solid fa-heading"></i> Textes principaux</div>
+          <div class="fg3">
+            <div class="fg"><label>Titre ligne 1</label><input id="heroTitle1" placeholder="Électricien"/></div>
+            <div class="fg"><label>Titre ligne 2</label><input id="heroTitle2" placeholder="Bâtiment"/></div>
+            <div class="fg"><label>Titre ligne 3</label><input id="heroTitle3" placeholder="Professionnel"/></div>
+          </div>
+          <div class="fg"><label>Badge hero (ex: SIRET…)</label><input id="heroBadge" placeholder="Badge sous les titres"/></div>
+          <div class="fg"><label>Slogan / Sous-titre (HTML autorisé)</label><textarea id="heroSlogan" placeholder="Votre slogan..."></textarea></div>
+          <div class="fg2">
+            <div class="fg"><label>Badge photo</label><input id="heroPb" placeholder="Disponible · Paris"/></div>
+            <div class="fg"><label>Bouton navbar texte</label><input id="navBtnText" placeholder="Devis Gratuit"/></div>
+          </div>
+          <div class="fg2">
+            <div class="fg"><label>Stat chantiers</label><input id="statChantiers" type="number" placeholder="150"/></div>
+            <div class="fg"><label>Stat années exp.</label><input id="statExp" type="number" placeholder="5"/></div>
+          </div>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+            <button class="btn btn-y" onclick="saveHero()"><span class="btn-label"><i class="fa-solid fa-save"></i> Sauvegarder Hero</span><span class="btn-spin"><i class="fa-solid fa-spinner fa-spin"></i></span></button>
+            <span class="c-mark" id="c-hero"><i class="fa-solid fa-check-circle"></i> Sauvegardé</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><i class="fa-solid fa-star"></i> Points forts (Highlights)</div>
+          <div id="hl-editor"></div>
+          <button class="btn btn-ghost btn-sm" onclick="addHighlight()" style="margin-bottom:14px"><i class="fa-solid fa-plus"></i> Ajouter</button>
+          <br>
+          <button class="btn btn-y" onclick="saveHighlights()"><span class="btn-label"><i class="fa-solid fa-save"></i> Sauvegarder</span><span class="btn-spin"><i class="fa-solid fa-spinner fa-spin"></i></span></button>
+          <span class="c-mark" id="c-hl"><i class="fa-solid fa-check-circle"></i> Sauvegardé</span>
+        </div>
+      </div>
+
+      <!-- ═══ PROFIL ═══ -->
+      <div class="panel" id="panel-profil">
+        <div class="card">
+          <div class="card-title"><i class="fa-solid fa-user"></i> Textes À propos</div>
+          <div class="fg"><label>Paragraphe 1 (HTML autorisé)</label><textarea id="profilP1" rows="4"></textarea></div>
+          <div class="fg"><label>Paragraphe 2 (HTML autorisé)</label><textarea id="profilP2" rows="4"></textarea></div>
+          <button class="btn btn-y" onclick="saveProfil()"><span class="btn-label"><i class="fa-solid fa-save"></i> Sauvegarder</span><span class="btn-spin"><i class="fa-solid fa-spinner fa-spin"></i></span></button>
+          <span class="c-mark" id="c-profil"><i class="fa-solid fa-check-circle"></i> Sauvegardé</span>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><i class="fa-solid fa-timeline"></i> Timeline parcours</div>
+          <div id="tl-editor"></div>
+          <button class="btn btn-ghost btn-sm" onclick="addTimeline()" style="margin-bottom:14px"><i class="fa-solid fa-plus"></i> Ajouter étape</button>
+          <br>
+          <button class="btn btn-y" onclick="saveTimeline()"><span class="btn-label"><i class="fa-solid fa-save"></i> Sauvegarder</span><span class="btn-spin"><i class="fa-solid fa-spinner fa-spin"></i></span></button>
+          <span class="c-mark" id="c-tl"><i class="fa-solid fa-check-circle"></i> Sauvegardé</span>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><i class="fa-solid fa-certificate"></i> Certifications</div>
+          <div id="certs-editor"></div>
+          <button class="btn btn-ghost btn-sm" onclick="addCert()" style="margin-bottom:14px"><i class="fa-solid fa-plus"></i> Ajouter</button>
+          <br>
+          <button class="btn btn-y" onclick="saveCerts()"><span class="btn-label"><i class="fa-solid fa-save"></i> Sauvegarder</span><span class="btn-spin"><i class="fa-solid fa-spinner fa-spin"></i></span></button>
+          <span class="c-mark" id="c-certs"><i class="fa-solid fa-check-circle"></i> Sauvegardé</span>
+        </div>
+      </div>
+
+      <!-- ═══ SERVICES ═══ -->
+      <div class="panel" id="panel-services">
+        <div class="card">
+          <div class="card-title"><i class="fa-solid fa-heading"></i> Titre de la section</div>
+          <div class="fg2">
+            <div class="fg"><label>Titre</label><input id="svcTitle" placeholder="Nos Services"/></div>
+            <div class="fg"><label>Description</label><input id="svcDesc" placeholder="Description courte..."/></div>
+          </div>
+          <button class="btn btn-y btn-sm" onclick="saveSvcTitle()"><span class="btn-label"><i class="fa-solid fa-save"></i> Sauvegarder titre</span><span class="btn-spin"><i class="fa-solid fa-spinner fa-spin"></i></span></button>
+          <span class="c-mark" id="c-svct"><i class="fa-solid fa-check-circle"></i> Sauvegardé</span>
+        </div>
+        <div class="card">
+          <div class="card-title"><i class="fa-solid fa-bolt"></i> Liste des services</div>
+          <div id="svc-editor"></div>
+          <button class="btn btn-ghost btn-sm" onclick="addService()" style="margin-bottom:14px"><i class="fa-solid fa-plus"></i> Ajouter service</button>
+          <br>
+          <button class="btn btn-y" onclick="saveServices()"><span class="btn-label"><i class="fa-solid fa-save"></i> Sauvegarder services</span><span class="btn-spin"><i class="fa-solid fa-spinner fa-spin"></i></span></button>
+          <span class="c-mark" id="c-svc"><i class="fa-solid fa-check-circle"></i> Sauvegardé</span>
+        </div>
+      </div>
+
+      <!-- ═══ COMPETENCES ═══ -->
+      <div class="panel" id="panel-competences">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title"><i class="fa-solid fa-bolt"></i> Compétences Électricité</div>
+            <div id="elec-skills-ed"></div>
+            <button class="btn btn-ghost btn-sm" onclick="addElecSkill()" style="margin-bottom:14px"><i class="fa-solid fa-plus"></i> Ajouter</button>
+            <br>
+            <button class="btn btn-y" onclick="saveElecSkills()"><span class="btn-label"><i class="fa-solid fa-save"></i> Sauvegarder</span><span class="btn-spin"><i class="fa-solid fa-spinner fa-spin"></i></span></button>
+            <span class="c-mark" id="c-elec"><i class="fa-solid fa-check-circle"></i> Sauvegardé</span>
+          </div>
+          <div class="card">
+            <div class="card-title" style="color:var(--cyan)"><i class="fa-solid fa-shield-halved"></i> Compétences Cyber</div>
+            <div id="cyber-comp-ed"></div>
+            <button class="btn btn-ghost btn-sm" onclick="addCyberComp()" style="margin-bottom:14px"><i class="fa-solid fa-plus"></i> Ajouter</button>
+            <br>
+            <button class="btn btn-cyan" onclick="saveCyberComps()"><span class="btn-label"><i class="fa-solid fa-save"></i> Sauvegarder</span><span class="btn-spin"><i class="fa-solid fa-spinner fa-spin"></i></span></button>
+            <span class="c-mark" id="c-cybercomp"><i class="fa-solid fa-check-circle"></i> Sauvegardé</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ REALISATIONS ═══ -->
+      <div class="panel" id="panel-realisations">
+        <div class="card">
+          <div class="card-title"><i class="fa-solid fa-star"></i> Gérer les réalisations</div>
+          <div id="real-editor"></div>
+          <button class="btn btn-ghost btn-sm" onclick="addRealisation()" style="margin-bottom:14px"><i class="fa-solid fa-plus"></i> Ajouter réalisation</button>
+          <br>
+          <button class="btn btn-y btn-lg" onclick="saveRealisations()"><span class="btn-label"><i class="fa-solid fa-save"></i> Tout sauvegarder</span><span class="btn-spin"><i class="fa-solid fa-spinner fa-spin"></i></span></button>
+          <span class="c-mark" id="c-real"><i class="fa-solid fa-check-circle"></i> Sauvegardé</span>
+        </div>
+      </div>
+
+      <!-- ═══ CYBERSEC ═══ -->
+      <div class="panel" id="panel-cybersec">
+        <div class="card">
+          <div class="card-title" style="color:var(--cyan)"><i class="fa-solid fa-shield-halved"></i> Section Cybersécurité</div>
+          <div class="fg"><label>Paragraphe intro 1 (HTML)</label><textarea id="cyberP1" rows="3"></textarea></div>
+          <div class="fg"><label>Paragraphe intro 2 (HTML)</label><textarea id="cyberP2" rows="3"></textarea></div>
+          <div class="fg2">
+            <div class="fg"><label>Nom organisation (ex: OWASP)</label><input id="cyberOrg" placeholder="OWASP France"/></div>
+            <div class="fg"><label>Description organisation</label><input id="cyberDesc" placeholder="..."/></div>
+          </div>
+          <button class="btn btn-cyan" onclick="saveCyber()"><span class="btn-label"><i class="fa-solid fa-save"></i> Sauvegarder</span><span class="btn-spin"><i class="fa-solid fa-spinner fa-spin"></i></span></button>
+          <span class="c-mark" id="c-cyber"><i class="fa-solid fa-check-circle"></i> Sauvegardé</span>
+        </div>
+        <div class="card">
+          <div class="card-title" style="color:var(--cyan)"><i class="fa-solid fa-shield-halved"></i> Cartes compétences cyber</div>
+          <div id="cy-cards-ed"></div>
+          <button class="btn btn-ghost btn-sm" onclick="addCyCard()" style="margin-bottom:14px"><i class="fa-solid fa-plus"></i> Ajouter carte</button>
+          <br>
+          <button class="btn btn-cyan" onclick="saveCyCards()"><span class="btn-label"><i class="fa-solid fa-save"></i> Sauvegarder</span><span class="btn-spin"><i class="fa-solid fa-spinner fa-spin"></i></span></button>
+          <span class="c-mark" id="c-cycards"><i class="fa-solid fa-check-circle"></i> Sauvegardé</span>
+        </div>
+      </div>
+
+      <!-- ═══ CONTACT ═══ -->
+      <div class="panel" id="panel-contact">
+        <div class="card">
+          <div class="card-title"><i class="fa-solid fa-phone"></i> Coordonnées</div>
+          <div class="fg3">
+            <div class="fg"><label>Téléphone</label><input id="cfPhone" placeholder="01 42 37 57 51"/></div>
+            <div class="fg"><label>WhatsApp (avec indicatif)</label><input id="cfWA" placeholder="33142375751"/></div>
+            <div class="fg"><label>Email</label><input id="cfEmail" placeholder="david@example.com"/></div>
+          </div>
+          <div class="fg2">
+            <div class="fg"><label>Adresse</label><input id="cfAddress" placeholder="Paris, France"/></div>
+            <div class="fg"><label>Horaires (séparer par |)</label><input id="cfHours" placeholder="Lun-Sam 8h–20h | Urgences 24/7"/></div>
+          </div>
+          <button class="btn btn-y" onclick="saveContact()"><span class="btn-label"><i class="fa-solid fa-save"></i> Sauvegarder</span><span class="btn-spin"><i class="fa-solid fa-spinner fa-spin"></i></span></button>
+          <span class="c-mark" id="c-contact"><i class="fa-solid fa-check-circle"></i> Sauvegardé</span>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><i class="fa-solid fa-share-nodes"></i> Réseaux sociaux & Footer</div>
+          <div class="fg2">
+            <div class="fg"><label>Facebook URL</label><input id="cfFb" placeholder="https://facebook.com/..."/></div>
+            <div class="fg"><label>Instagram URL</label><input id="cfIg" placeholder="https://instagram.com/..."/></div>
+          </div>
+          <div class="fg"><label>Description footer</label><textarea id="cfFooterDesc" rows="2"></textarea></div>
+          <div class="fg2">
+            <div class="fg"><label>Copyright</label><input id="cfCopyright" placeholder="© 2025 DavTech II"/></div>
+            <div class="fg"><label>Titre section contact</label><input id="cfContactTitle" placeholder="Contactez-<span>Moi</span>"/></div>
+          </div>
+          <button class="btn btn-y" onclick="saveSocial()"><span class="btn-label"><i class="fa-solid fa-save"></i> Sauvegarder</span><span class="btn-spin"><i class="fa-solid fa-spinner fa-spin"></i></span></button>
+          <span class="c-mark" id="c-social"><i class="fa-solid fa-check-circle"></i> Sauvegardé</span>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><i class="fa-solid fa-note-sticky"></i> SEO</div>
+          <div class="fg2">
+            <div class="fg"><label>Meta titre</label><input id="seoTitle" placeholder="DavTech II – Électricien"/></div>
+            <div class="fg"><label>Meta description</label><input id="seoDesc" placeholder="Description pour Google..."/></div>
+          </div>
+          <button class="btn btn-y btn-sm" onclick="saveSEO()"><span class="btn-label"><i class="fa-solid fa-save"></i> Sauvegarder SEO</span><span class="btn-spin"><i class="fa-solid fa-spinner fa-spin"></i></span></button>
+          <span class="c-mark" id="c-seo"><i class="fa-solid fa-check-circle"></i> Sauvegardé</span>
+        </div>
+      </div>
+
+      <!-- ═══ APPARENCE ═══ -->
+      <div class="panel" id="panel-apparence">
+        <div class="card">
+          <div class="card-title"><i class="fa-solid fa-palette"></i> Couleurs du site</div>
+          <div class="fg2">
+            <div class="fg">
+              <label>Couleur principale (jaune)</label>
+              <div class="color-row">
+                <input type="color" value="#ffd700" id="colPrimary" onchange="previewColor('primary',this.value)" class="color-preview"/>
+                <input type="text" id="colPrimaryHex" value="#ffd700" oninput="syncColor('colPrimary',this.value)" style="flex:1"/>
+              </div>
+            </div>
+            <div class="fg">
+              <label>Couleur cyber (cyan)</label>
+              <div class="color-row">
+                <input type="color" value="#00d4ff" id="colCyber" onchange="previewColor('cyber',this.value)" class="color-preview"/>
+                <input type="text" id="colCyberHex" value="#00d4ff" oninput="syncColor('colCyber',this.value)" style="flex:1"/>
+              </div>
+            </div>
+          </div>
+          <button class="btn btn-y" onclick="saveColors()"><span class="btn-label"><i class="fa-solid fa-save"></i> Appliquer les couleurs</span><span class="btn-spin"><i class="fa-solid fa-spinner fa-spin"></i></span></button>
+          <span class="c-mark" id="c-colors"><i class="fa-solid fa-check-circle"></i> Sauvegardé</span>
+        </div>
+      </div>
+
+      <!-- ═══ SECURITE ═══ -->
+      <div class="panel" id="panel-securite">
+        <div class="card">
+          <div class="card-title"><i class="fa-solid fa-lock"></i> Changer le mot de passe</div>
+          <div class="fg"><label>Nouveau mot de passe</label>
+            <input type="password" id="pwd-new" placeholder="Minimum 8 caractères" oninput="checkPwd(this.value)"/>
+            <div class="pwd-strength"><div class="pwd-fill" id="pwd-fill"></div></div>
+          </div>
+          <div class="fg"><label>Confirmer le mot de passe</label>
+            <input type="password" id="pwd-confirm" placeholder="Répéter le mot de passe"/>
+          </div>
+          <button class="btn btn-y" onclick="changePassword()"><span class="btn-label"><i class="fa-solid fa-key"></i> Changer le mot de passe</span><span class="btn-spin"><i class="fa-solid fa-spinner fa-spin"></i></span></button>
+          <span class="c-mark" id="c-pwd"><i class="fa-solid fa-check-circle"></i> Mot de passe changé</span>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><i class="fa-solid fa-shield-halved"></i> Informations du compte Firebase</div>
+          <div style="font-size:.83rem;color:var(--text3);line-height:2.2" id="sec-info">Chargement...</div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </main>
+</div><!-- /app -->
+
+<!-- TOAST -->
+<div id="notifToast"></div>
+
+<!-- MODAL CONFIRM DELETE -->
+<div class="overlay" id="confirmOverlay">
+  <div class="modal">
+    <div class="modal-close" onclick="closeConfirm()"><i class="fa-solid fa-times"></i></div>
+    <div class="modal-title" id="confirmTitle">Confirmer la suppression</div>
+    <p id="confirmText" style="font-size:.85rem;color:var(--text3);margin-bottom:20px"></p>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-ghost" onclick="closeConfirm()">Annuler</button>
+      <button class="btn btn-red" id="confirmOk">Confirmer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ FIREBASE ═══ -->
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, updatePassword } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+import { getFirestore, collection, addDoc, getDocs, getDoc, setDoc, updateDoc, deleteDoc, doc, query, orderBy, serverTimestamp, onSnapshot, limit } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBHbUxhnY42e2U1PamzRqjnMoShJtqw6cA",
+  authDomain: "davtech-ii.firebaseapp.com",
+  projectId: "davtech-ii",
+  storageBucket: "davtech-ii.firebasestorage.app",
+  messagingSenderId: "933903016595",
+  appId: "1:933903016595:web:f0f12dbf0d66e2f65fe366"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// ── AUTH STATE ──────────────────────────────────────────────
+onAuthStateChanged(auth, user => {
+  if (user) {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('app').classList.add('on');
+    document.getElementById('s-uname').textContent = user.displayName || user.email.split('@')[0];
+    document.getElementById('s-uemail').textContent = user.email;
+    document.getElementById('s-av').textContent = (user.displayName||user.email)[0].toUpperCase();
+    document.getElementById('sec-info').innerHTML =
+      `<b>Email :</b> ${user.email}<br/><b>UID :</b> <span style="font-family:var(--mono);font-size:.72rem">${user.uid}</span><br/><b>Connexion :</b> ${new Date(user.metadata.lastSignInTime).toLocaleString('fr-FR')}`;
+    loadAll();
+    startClock();
+  } else {
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('app').classList.remove('on');
+  }
+});
+
+// ── LOGIN ───────────────────────────────────────────────────
+window.doLogin = async () => {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pwd = document.getElementById('loginPwd').value;
+  const btn = document.getElementById('loginBtn');
+  const err = document.getElementById('loginErr');
+  if (!email || !pwd) { err.textContent = 'Remplissez tous les champs.'; return; }
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Connexion...';
+  err.textContent = '';
+  try {
+    await signInWithEmailAndPassword(auth, email, pwd);
+  } catch (e) {
+    const msgs = {
+      'auth/user-not-found': 'Email introuvable.',
+      'auth/wrong-password': 'Mot de passe incorrect.',
+      'auth/invalid-credential': 'Identifiants invalides.',
+      'auth/too-many-requests': 'Trop de tentatives. Réessayez plus tard.',
+      'auth/invalid-email': 'Email invalide.'
+    };
+    err.textContent = msgs[e.code] || 'Erreur : ' + e.message;
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Connexion';
+  }
+};
+
+window.doLogout = async () => {
+  await signOut(auth);
+  notif('Déconnecté', 'info');
+};
+
+// ── SAVE HELPER ─────────────────────────────────────────────
+async function saveCfg(data) {
+  await setDoc(doc(db, 'config', 'site'), data, { merge: true });
+}
+window.__saveCfg = saveCfg;
+
+// ── LOAD ALL ─────────────────────────────────────────────────
+async function loadAll() {
+  const [cfgSnap, svcSnap, realSnap] = await Promise.all([
+    getDoc(doc(db, 'config', 'site')),
+    getDoc(doc(db, 'config', 'services')),
+    getDoc(doc(db, 'config', 'realisations'))
+  ]);
+
+  const d = cfgSnap.exists() ? cfgSnap.data() : {};
+  const svcs = svcSnap.exists() ? (svcSnap.data().list || []) : [];
+  const reals = realSnap.exists() ? (realSnap.data().list || []) : [];
+
+  // HERO
+  setV('heroTitle1', d.heroTitle1 || '');
+  setV('heroTitle2', d.heroTitle2 || '');
+  setV('heroTitle3', d.heroTitle3 || '');
+  setV('heroBadge', d.badge || '');
+  setV('heroSlogan', d.slogan || '');
+  setV('heroPb', d.photoBadge || '');
+  setV('navBtnText', d.navBtnText || '');
+  setV('statChantiers', d.chantiers || '');
+  setV('statExp', d.exp || '');
+  renderHighlights(d.highlights || []);
+
+  // PROFIL
+  setV('profilP1', d.profilP1 || '');
+  setV('profilP2', d.profilP2 || '');
+  renderTimeline(d.timeline || []);
+  renderCerts(d.certs || []);
+
+  // SERVICES
+  setV('svcTitle', d.servicesSectionTitle || '');
+  setV('svcDesc', d.servicesSectionDesc || '');
+  renderServices(svcs);
+
+  // COMPETENCES
+  renderElecSkills(d.elecSkills || []);
+  renderCyberComps(d.cyberComps || []);
+
+  // REALISATIONS
+  renderReals(reals);
+  document.getElementById('dash-reals').textContent = reals.length;
+  document.getElementById('dash-svcs').textContent = svcs.length;
+
+  // CYBERSEC
+  setV('cyberP1', d.cyberP1 || '');
+  setV('cyberP2', d.cyberP2 || '');
+  setV('cyberOrg', d.cyberOrg || '');
+  setV('cyberDesc', d.cyberDesc || '');
+  renderCyCards(d.cyberSkills || []);
+
+  // CONTACT
+  setV('cfPhone', d.phone || '');
+  setV('cfWA', d.whatsapp || '');
+  setV('cfEmail', d.email || '');
+  setV('cfAddress', d.address || '');
+  setV('cfHours', d.hours || '');
+  setV('cfFb', d.facebook || '');
+  setV('cfIg', d.instagram || '');
+  setV('cfFooterDesc', d.footerDesc || '');
+  setV('cfCopyright', d.copyright || '');
+  setV('cfContactTitle', d.contactTitle || '');
+  setV('seoTitle', d.seoTitle || '');
+  setV('seoDesc', d.seoDesc || '');
+
+  // APPARENCE
+  if (d.colorPrimary) { document.getElementById('colPrimary').value = d.colorPrimary; setV('colPrimaryHex', d.colorPrimary); }
+  if (d.colorCyber) { document.getElementById('colCyber').value = d.colorCyber; setV('colCyberHex', d.colorCyber); }
+
+  // DASHBOARD INFO
+  document.getElementById('dash-site-info').innerHTML =
+    `<b>📞 Tél :</b> ${d.phone||'—'}<br/><b>📧 Email :</b> ${d.email||'—'}<br/><b>📍 Adresse :</b> ${d.address||'—'}<br/><b>🎨 Couleur :</b> <span style="color:${d.colorPrimary||'#ffd700'}">${d.colorPrimary||'#ffd700'}</span><br/><b>📑 SEO titre :</b> ${d.seoTitle||'—'}`;
+
+  loadMessages();
+}
+
+// ── MESSAGES ─────────────────────────────────────────────────
+let allMessages = [];
+let currentFilter = 'all';
+let currentMsgId = null;
+
+async function loadMessages() {
+  try {
+    const q = query(collection(db, 'messages'), orderBy('date', 'desc'));
+    onSnapshot(q, snap => {
+      allMessages = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      const unread = allMessages.filter(m => !m.lu).length;
+      document.getElementById('dash-msgs').textContent = allMessages.length;
+      document.getElementById('dash-unread').textContent = unread;
+      document.getElementById('badge-msgs').textContent = unread || '';
+      document.getElementById('badge-msgs').style.display = unread ? '' : 'none';
+      renderMessages();
+      renderDashMsgs();
+    });
+  } catch (e) { console.warn(e); }
+}
+
+function renderMessages() {
+  const filtered = currentFilter === 'all' ? allMessages
+    : currentFilter === 'unread' ? allMessages.filter(m => !m.lu)
+    : allMessages.filter(m => m.lu);
+  const container = document.getElementById('msgs-container');
+  if (!filtered.length) {
+    container.innerHTML = '<div class="empty"><i class="fa-solid fa-inbox"></i><p>Aucun message</p></div>';
+    return;
+  }
+  container.innerHTML = filtered.map(m => {
+    const dateStr = m.date?.toDate ? m.date.toDate().toLocaleDateString('fr-FR', {day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}) : '—';
+    return `<div class="msg-item ${m.lu?'':'unread'}" onclick="openMsg('${m.id}')">
+      <div class="msg-avatar">${(m.name||'?')[0].toUpperCase()}</div>
+      <div class="msg-body">
+        <div class="msg-from">${esc(m.name||'Inconnu')} <span style="color:var(--text2);font-size:.7rem;font-weight:400">${esc(m.phone||'')}</span></div>
+        <div class="msg-email">${esc(m.email||'')}</div>
+        <div class="msg-preview">${esc(m.message||'')}</div>
+        ${m.service?`<span class="td-badge sent" style="margin-top:5px">${esc(m.service)}</span>`:''}
+      </div>
+      <div class="msg-meta">
+        <span class="msg-time">${dateStr}</span>
+        <span class="td-badge ${m.lu?'read':'unread'}">${m.lu?'Lu':'Nouveau'}</span>
+        <div class="msg-actions" onclick="event.stopPropagation()">
+          <button class="btn btn-ghost btn-sm" onclick="toggleRead('${m.id}',${m.lu})" title="${m.lu?'Marquer non lu':'Marquer lu'}"><i class="fa-solid ${m.lu?'fa-envelope':'fa-envelope-open'}"></i></button>
+          <button class="btn btn-red btn-sm" onclick="deleteMsg('${m.id}')" title="Supprimer"><i class="fa-solid fa-trash"></i></button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderDashMsgs() {
+  const recent = allMessages.slice(0, 5);
+  document.getElementById('dash-recent-count').textContent = recent.length;
+  if (!recent.length) {
+    document.getElementById('dash-recent-msgs').innerHTML = '<div class="empty"><i class="fa-solid fa-inbox"></i><p>Aucun message</p></div>';
+    return;
+  }
+  document.getElementById('dash-recent-msgs').innerHTML = recent.map(m => {
+    const dateStr = m.date?.toDate ? m.date.toDate().toLocaleDateString('fr-FR',{day:'2-digit',month:'short'}) : '—';
+    return `<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)" onclick="showPanel('messages',null);openMsg('${m.id}')" style="cursor:pointer">
+      <div class="msg-avatar" style="width:30px;height:30px;font-size:.72rem">${(m.name||'?')[0].toUpperCase()}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:.8rem;font-weight:600">${esc(m.name||'Inconnu')}</div>
+        <div style="font-size:.72rem;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(m.message||'')}</div>
+      </div>
+      <div style="font-size:.66rem;color:var(--text2);font-family:var(--mono)">${dateStr}</div>
+      ${!m.lu?'<span class="td-badge unread" style="font-size:.6rem">NEW</span>':''}
+    </div>`;
+  }).join('');
+}
+
+window.filterMsgs = (f) => {
+  currentFilter = f;
+  ['all','unread','read'].forEach(x => {
+    document.getElementById('filt-'+x).className = 'btn btn-sm ' + (x===f ? 'btn-y' : 'btn-ghost');
+  });
+  document.getElementById('msgDetail').classList.remove('open');
+  renderMessages();
+};
+
+window.openMsg = async (id) => {
+  const m = allMessages.find(x => x.id === id);
+  if (!m) return;
+  currentMsgId = id;
+  if (!m.lu) {
+    await updateDoc(doc(db, 'messages', id), { lu: true });
+  }
+  const dateStr = m.date?.toDate ? m.date.toDate().toLocaleString('fr-FR') : '—';
+  const detail = document.getElementById('msgDetail');
+  detail.innerHTML = `
+    <div class="msg-d-hd">
+      <div class="msg-d-info">
+        <div class="msg-d-name">${esc(m.name||'Inconnu')} <span style="color:var(--y);font-size:.8rem">${esc(m.phone||'')}</span></div>
+        <div class="msg-d-email">${esc(m.email||'')}</div>
+        <div class="msg-d-meta"><i class="fa-solid fa-calendar"></i> ${dateStr} · Service : <b>${esc(m.service||'—')}</b></div>
+      </div>
+      <div style="display:flex;gap:7px">
+        <a href="mailto:${esc(m.email||'')}?subject=Réponse à votre demande" class="btn btn-y btn-sm"><i class="fa-solid fa-reply"></i> Répondre par mail</a>
+        <a href="tel:${(m.phone||'').replace(/\s/g,'')}" class="btn btn-ghost btn-sm"><i class="fa-solid fa-phone"></i> Appeler</a>
+        <button class="btn btn-red btn-sm" onclick="deleteMsg('${id}')"><i class="fa-solid fa-trash"></i></button>
+      </div>
+    </div>
+    <div class="msg-d-body">${esc(m.message||'')}</div>`;
+  detail.classList.add('open');
+  detail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+};
+
+window.toggleRead = async (id, isRead) => {
+  await updateDoc(doc(db, 'messages', id), { lu: !isRead });
+};
+
+window.deleteMsg = (id) => {
+  openConfirm('Supprimer ce message ?', 'Cette action est irréversible.', async () => {
+    await deleteDoc(doc(db, 'messages', id));
+    document.getElementById('msgDetail').classList.remove('open');
+    notif('Message supprimé');
+  });
+};
+
+window.deleteAllRead = () => {
+  const reads = allMessages.filter(m => m.lu);
+  if (!reads.length) { notif('Aucun message lu à supprimer', 'info'); return; }
+  openConfirm(`Supprimer ${reads.length} message(s) lus ?`, 'Cette action est irréversible.', async () => {
+    await Promise.all(reads.map(m => deleteDoc(doc(db, 'messages', m.id))));
+    notif(`${reads.length} message(s) supprimé(s)`);
+  });
+};
+
+// ── SAVE FUNCTIONS ───────────────────────────────────────────
+window.saveHero = async () => {
+  await btnSave('saveHero', async () => {
+    await saveCfg({
+      heroTitle1: gV('heroTitle1'), heroTitle2: gV('heroTitle2'), heroTitle3: gV('heroTitle3'),
+      badge: gV('heroBadge'), slogan: gV('heroSlogan'), photoBadge: gV('heroPb'),
+      navBtnText: gV('navBtnText'),
+      chantiers: parseInt(gV('statChantiers'))||0,
+      exp: parseInt(gV('statExp'))||0
+    });
+    confirm2('c-hero');
+  });
+};
+
+window.saveHighlights = async () => {
+  await btnSave('saveHighlights', async () => {
+    const items = [...document.querySelectorAll('.hl-block')].map(el => ({
+      icon: el.querySelector('.hl-icon').value,
+      title: el.querySelector('.hl-title').value,
+      desc: el.querySelector('.hl-desc').value
+    }));
+    await saveCfg({ highlights: items });
+    confirm2('c-hl');
+  });
+};
+
+window.saveProfil = async () => {
+  await btnSave('saveProfil', async () => {
+    await saveCfg({ profilP1: gV('profilP1'), profilP2: gV('profilP2') });
+    confirm2('c-profil');
+  });
+};
+
+window.saveTimeline = async () => {
+  await btnSave('saveTimeline', async () => {
+    const items = [...document.querySelectorAll('.tl-block')].map(el => ({
+      title: el.querySelector('.tl-title').value,
+      date: el.querySelector('.tl-date').value,
+      desc: el.querySelector('.tl-desc').value,
+      cyber: el.querySelector('.tl-cyber').checked
+    }));
+    await saveCfg({ timeline: items });
+    confirm2('c-tl');
+  });
+};
+
+window.saveCerts = async () => {
+  await btnSave('saveCerts', async () => {
+    const items = [...document.querySelectorAll('.cert-block')].map(el => ({
+      title: el.querySelector('.cert-title').value,
+      desc: el.querySelector('.cert-desc').value
+    }));
+    await saveCfg({ certs: items });
+    confirm2('c-certs');
+  });
+};
+
+window.saveSvcTitle = async () => {
+  await btnSave('saveSvcTitle', async () => {
+    await saveCfg({ servicesSectionTitle: gV('svcTitle'), servicesSectionDesc: gV('svcDesc') });
+    confirm2('c-svct');
+  });
+};
+
+window.saveServices = async () => {
+  await btnSave('saveServices', async () => {
+    const list = [...document.querySelectorAll('.svc-block')].map(el => ({
+      title: el.querySelector('.svc-title').value,
+      desc: el.querySelector('.svc-desc').value,
+      items: el.querySelector('.svc-items').value.split('\n').map(s=>s.trim()).filter(Boolean)
+    }));
+    await setDoc(doc(db, 'config', 'services'), { list });
+    confirm2('c-svc');
+  });
+};
+
+window.saveElecSkills = async () => {
+  await btnSave('saveElecSkills', async () => {
+    const items = [...document.querySelectorAll('.elec-item')].map(el => ({
+      name: el.querySelector('.es-name').value,
+      pct: parseInt(el.querySelector('.es-pct').value)||0
+    }));
+    await saveCfg({ elecSkills: items });
+    confirm2('c-elec');
+  });
+};
+
+window.saveCyberComps = async () => {
+  await btnSave('saveCyberComps', async () => {
+    const items = [...document.querySelectorAll('.cycomp-item')].map(el => ({
+      name: el.querySelector('.cc-name').value,
+      pct: parseInt(el.querySelector('.cc-pct').value)||0
+    }));
+    await saveCfg({ cyberComps: items });
+    confirm2('c-cybercomp');
+  });
+};
+
+window.saveRealisations = async () => {
+  await btnSave('saveRealisations', async () => {
+    const list = [...document.querySelectorAll('.real-block')].map(el => ({
+      title: el.querySelector('.re-title').value,
+      type: el.querySelector('.re-type').value,
+      desc: el.querySelector('.re-desc').value,
+      date: el.querySelector('.re-date').value,
+      lieu: el.querySelector('.re-lieu').value
+    }));
+    await setDoc(doc(db, 'config', 'realisations'), { list });
+    confirm2('c-real');
+  });
+};
+
+window.saveCyber = async () => {
+  await btnSave('saveCyber', async () => {
+    await saveCfg({
+      cyberP1: gV('cyberP1'), cyberP2: gV('cyberP2'),
+      cyberOrg: gV('cyberOrg'), cyberDesc: gV('cyberDesc')
+    });
+    confirm2('c-cyber');
+  });
+};
+
+window.saveCyCards = async () => {
+  await btnSave('saveCyCards', async () => {
+    const items = [...document.querySelectorAll('.cy-card-block')].map(el => ({
+      icon: el.querySelector('.cy-icon').value,
+      title: el.querySelector('.cy-title').value,
+      desc: el.querySelector('.cy-desc').value
+    }));
+    await saveCfg({ cyberSkills: items });
+    confirm2('c-cycards');
+  });
+};
+
+window.saveContact = async () => {
+  await btnSave('saveContact', async () => {
+    await saveCfg({
+      phone: gV('cfPhone'), whatsapp: gV('cfWA'), email: gV('cfEmail'),
+      address: gV('cfAddress'), hours: gV('cfHours')
+    });
+    confirm2('c-contact');
+  });
+};
+
+window.saveSocial = async () => {
+  await btnSave('saveSocial', async () => {
+    await saveCfg({
+      facebook: gV('cfFb'), instagram: gV('cfIg'),
+      footerDesc: gV('cfFooterDesc'), copyright: gV('cfCopyright'),
+      contactTitle: gV('cfContactTitle')
+    });
+    confirm2('c-social');
+  });
+};
+
+window.saveSEO = async () => {
+  await btnSave('saveSEO', async () => {
+    await saveCfg({ seoTitle: gV('seoTitle'), seoDesc: gV('seoDesc') });
+    confirm2('c-seo');
+  });
+};
+
+window.saveColors = async () => {
+  await btnSave('saveColors', async () => {
+    await saveCfg({ colorPrimary: gV('colPrimaryHex'), colorCyber: gV('colCyberHex') });
+    confirm2('c-colors');
+  });
+};
+
+window.changePassword = async () => {
+  const nw = gV('pwd-new'), conf = gV('pwd-confirm');
+  if (nw.length < 8) { notif('Minimum 8 caractères', 'err'); return; }
+  if (nw !== conf) { notif('Les mots de passe ne correspondent pas', 'err'); return; }
+  try {
+    await updatePassword(auth.currentUser, nw);
+    confirm2('c-pwd');
+    notif('Mot de passe changé avec succès !');
+    document.getElementById('pwd-new').value = '';
+    document.getElementById('pwd-confirm').value = '';
+  } catch (e) {
+    if (e.code === 'auth/requires-recent-login') {
+      notif('Reconnectez-vous pour changer le mot de passe', 'err');
+    } else {
+      notif('Erreur : ' + e.message, 'err');
+    }
+  }
+};
+
+// ── RENDER HELPERS ───────────────────────────────────────────
+function renderHighlights(items) {
+  document.getElementById('hl-editor').innerHTML = items.map(h => `
+    <div class="hl-block">
+      <input class="hl-icon" value="${esc(h.icon||'fa-bolt')}" placeholder="Icône FA (fa-bolt)" style="flex:0 0 160px"/>
+      <input class="hl-title" value="${esc(h.title||'')}" placeholder="Titre"/>
+      <input class="hl-desc" value="${esc(h.desc||'')}" placeholder="Description"/>
+      <button onclick="this.closest('.hl-block').remove()" class="btn btn-red btn-sm"><i class="fa-solid fa-times"></i></button>
+    </div>`).join('');
+}
+window.addHighlight = () => {
+  document.getElementById('hl-editor').insertAdjacentHTML('beforeend',`
+    <div class="hl-block">
+      <input class="hl-icon" value="fa-bolt" placeholder="Icône FA" style="flex:0 0 160px"/>
+      <input class="hl-title" value="" placeholder="Titre"/>
+      <input class="hl-desc" value="" placeholder="Description"/>
+      <button onclick="this.closest('.hl-block').remove()" class="btn btn-red btn-sm"><i class="fa-solid fa-times"></i></button>
+    </div>`);
+};
+
+function renderTimeline(items) {
+  document.getElementById('tl-editor').innerHTML = items.map((t,i) => `
+    <div class="tl-block">
+      <div class="tl-block-hd">
+        <span style="font-size:.72rem;color:var(--text2);font-family:var(--mono)">ÉTAPE ${i+1}</span>
+        <button onclick="this.closest('.tl-block').remove()" class="btn btn-red btn-sm"><i class="fa-solid fa-trash"></i></button>
+      </div>
+      <div class="fg3">
+        <div class="fg"><label>Titre</label><input class="tl-title" value="${esc(t.title||'')}"/></div>
+        <div class="fg"><label>Date</label><input class="tl-date" value="${esc(t.date||'')}"/></div>
+        <div class="fg"><label>Description</label><input class="tl-desc" value="${esc(t.desc||'')}"/></div>
+      </div>
+      <label style="display:flex;align-items:center;gap:8px;font-size:.75rem;color:var(--cyan);cursor:pointer">
+        <label class="switch"><input type="checkbox" class="tl-cyber" ${t.cyber?'checked':''}><span class="slider"></span></label>
+        Marqueur Cyber
+      </label>
+    </div>`).join('');
+}
+window.addTimeline = () => {
+  const i = document.querySelectorAll('.tl-block').length;
+  document.getElementById('tl-editor').insertAdjacentHTML('beforeend',`
+    <div class="tl-block">
+      <div class="tl-block-hd"><span style="font-size:.72rem;color:var(--text2);font-family:var(--mono)">ÉTAPE ${i+1}</span><button onclick="this.closest('.tl-block').remove()" class="btn btn-red btn-sm"><i class="fa-solid fa-trash"></i></button></div>
+      <div class="fg3">
+        <div class="fg"><label>Titre</label><input class="tl-title" value=""/></div>
+        <div class="fg"><label>Date</label><input class="tl-date" value=""/></div>
+        <div class="fg"><label>Description</label><input class="tl-desc" value=""/></div>
+      </div>
+      <label style="display:flex;align-items:center;gap:8px;font-size:.75rem;color:var(--cyan);cursor:pointer"><label class="switch"><input type="checkbox" class="tl-cyber"><span class="slider"></span></label>Marqueur Cyber</label>
+    </div>`);
+};
+
+function renderCerts(items) {
+  document.getElementById('certs-editor').innerHTML = items.map(c => `
+    <div class="skill-ed-item cert-block">
+      <input class="cert-title" value="${esc(c.title||'')}" placeholder="Titre certification" style="flex:1.5"/>
+      <input class="cert-desc" value="${esc(c.desc||'')}" placeholder="Sous-titre / organisme" style="flex:2"/>
+      <button onclick="this.closest('.cert-block').remove()" class="btn btn-red btn-sm"><i class="fa-solid fa-times"></i></button>
+    </div>`).join('');
+}
+window.addCert = () => {
+  document.getElementById('certs-editor').insertAdjacentHTML('beforeend',`
+    <div class="skill-ed-item cert-block">
+      <input class="cert-title" value="" placeholder="Titre certification" style="flex:1.5"/>
+      <input class="cert-desc" value="" placeholder="Sous-titre / organisme" style="flex:2"/>
+      <button onclick="this.closest('.cert-block').remove()" class="btn btn-red btn-sm"><i class="fa-solid fa-times"></i></button>
+    </div>`);
+};
+
+function renderServices(list) {
+  document.getElementById('svc-editor').innerHTML = list.map((s,i) => `
+    <div class="real-block svc-block">
+      <div class="real-block-hd">
+        <h4><i class="fa-solid fa-bolt" style="color:var(--y)"></i> Service ${i+1}</h4>
+        <button onclick="this.closest('.svc-block').remove()" class="btn btn-red btn-sm"><i class="fa-solid fa-trash"></i></button>
+      </div>
+      <div class="fg2">
+        <div class="fg"><label>Titre</label><input class="svc-title" value="${esc(s.title||'')}"/></div>
+        <div class="fg"><label>Description</label><input class="svc-desc" value="${esc(s.desc||'')}"/></div>
+      </div>
+      <div class="fg"><label>Items (un par ligne)</label><textarea class="svc-items" rows="4">${(s.items||[]).join('\n')}</textarea></div>
+    </div>`).join('');
+}
+window.addService = () => {
+  const i = document.querySelectorAll('.svc-block').length;
+  document.getElementById('svc-editor').insertAdjacentHTML('beforeend',`
+    <div class="real-block svc-block">
+      <div class="real-block-hd"><h4><i class="fa-solid fa-bolt" style="color:var(--y)"></i> Service ${i+1}</h4><button onclick="this.closest('.svc-block').remove()" class="btn btn-red btn-sm"><i class="fa-solid fa-trash"></i></button></div>
+      <div class="fg2"><div class="fg"><label>Titre</label><input class="svc-title" value=""/></div><div class="fg"><label>Description</label><input class="svc-desc" value=""/></div></div>
+      <div class="fg"><label>Items (un par ligne)</label><textarea class="svc-items" rows="4"></textarea></div>
+    </div>`);
+};
+
+function renderElecSkills(items) {
+  document.getElementById('elec-skills-ed').innerHTML = items.map(s => `
+    <div class="skill-ed-item elec-item">
+      <input class="es-name" value="${esc(s.name||'')}" placeholder="Compétence"/>
+      <input class="es-pct pct" type="number" min="0" max="100" value="${s.pct||0}"/>
+      <div class="pbar" style="flex:1"><div class="pbar-fill" style="width:${s.pct||0}%"></div></div>
+      <button onclick="this.closest('.elec-item').remove()" class="btn btn-red btn-sm"><i class="fa-solid fa-times"></i></button>
+    </div>`).join('');
+}
+window.addElecSkill = () => {
+  document.getElementById('elec-skills-ed').insertAdjacentHTML('beforeend',`
+    <div class="skill-ed-item elec-item">
+      <input class="es-name" value="" placeholder="Compétence"/>
+      <input class="es-pct pct" type="number" min="0" max="100" value="80"/>
+      <div class="pbar" style="flex:1"><div class="pbar-fill" style="width:80%"></div></div>
+      <button onclick="this.closest('.elec-item').remove()" class="btn btn-red btn-sm"><i class="fa-solid fa-times"></i></button>
+    </div>`);
+};
+
+function renderCyberComps(items) {
+  document.getElementById('cyber-comp-ed').innerHTML = items.map(s => `
+    <div class="skill-ed-item cycomp-item">
+      <input class="cc-name" value="${esc(s.name||'')}" placeholder="Compétence cyber"/>
+      <input class="cc-pct pct" type="number" min="0" max="100" value="${s.pct||0}" style="color:var(--cyan)"/>
+      <div class="pbar" style="flex:1"><div class="pbar-fill" style="width:${s.pct||0}%;background:var(--cyan)"></div></div>
+      <button onclick="this.closest('.cycomp-item').remove()" class="btn btn-red btn-sm"><i class="fa-solid fa-times"></i></button>
+    </div>`).join('');
+}
+window.addCyberComp = () => {
+  document.getElementById('cyber-comp-ed').insertAdjacentHTML('beforeend',`
+    <div class="skill-ed-item cycomp-item">
+      <input class="cc-name" value="" placeholder="Compétence cyber"/>
+      <input class="cc-pct pct" type="number" min="0" max="100" value="70" style="color:var(--cyan)"/>
+      <div class="pbar" style="flex:1"><div class="pbar-fill" style="width:70%;background:var(--cyan)"></div></div>
+      <button onclick="this.closest('.cycomp-item').remove()" class="btn btn-red btn-sm"><i class="fa-solid fa-times"></i></button>
+    </div>`);
+};
+
+function renderReals(list) {
+  document.getElementById('real-editor').innerHTML = list.map((r,i) => `
+    <div class="real-block">
+      <div class="real-block-hd">
+        <h4><i class="fa-solid fa-star" style="color:var(--y)"></i> Réalisation ${i+1}</h4>
+        <button onclick="this.closest('.real-block').remove()" class="btn btn-red btn-sm"><i class="fa-solid fa-trash"></i></button>
+      </div>
+      <div class="fg2">
+        <div class="fg"><label>Titre</label><input class="re-title" value="${esc(r.title||'')}"/></div>
+        <div class="fg"><label>Type</label>
+          <select class="re-type">
+            <option value="Résidentiel" ${r.type==='Résidentiel'?'selected':''}>Résidentiel</option>
+            <option value="Commercial" ${r.type==='Commercial'?'selected':''}>Commercial</option>
+            <option value="Industriel" ${r.type==='Industriel'?'selected':''}>Industriel</option>
+            <option value="Cybersécurité" ${r.type==='Cybersécurité'?'selected':''}>Cybersécurité</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg2">
+        <div class="fg"><label>Description</label><input class="re-desc" value="${esc(r.desc||'')}"/></div>
+        <div class="fg"><label>Date</label><input class="re-date" value="${esc(r.date||'')}"/></div>
+      </div>
+      <div class="fg"><label>Lieu</label><input class="re-lieu" value="${esc(r.lieu||'')}"/></div>
+    </div>`).join('');
+}
+window.addRealisation = () => {
+  const i = document.querySelectorAll('.real-block').length;
+  document.getElementById('real-editor').insertAdjacentHTML('beforeend',`
+    <div class="real-block">
+      <div class="real-block-hd"><h4><i class="fa-solid fa-star" style="color:var(--y)"></i> Réalisation ${i+1}</h4><button onclick="this.closest('.real-block').remove()" class="btn btn-red btn-sm"><i class="fa-solid fa-trash"></i></button></div>
+      <div class="fg2"><div class="fg"><label>Titre</label><input class="re-title" value=""/></div><div class="fg"><label>Type</label><select class="re-type"><option value="Résidentiel">Résidentiel</option><option value="Commercial">Commercial</option><option value="Industriel">Industriel</option><option value="Cybersécurité">Cybersécurité</option></select></div></div>
+      <div class="fg2"><div class="fg"><label>Description</label><input class="re-desc" value=""/></div><div class="fg"><label>Date</label><input class="re-date" value=""/></div></div>
+      <div class="fg"><label>Lieu</label><input class="re-lieu" value=""/></div>
+    </div>`);
+};
+
+function renderCyCards(items) {
+  document.getElementById('cy-cards-ed').innerHTML = items.map(c => `
+    <div class="cy-card-block cy-block">
+      <div style="display:flex;justify-content:space-between;margin-bottom:10px">
+        <input class="cy-icon" value="${esc(c.icon||'fa-shield-halved')}" placeholder="Icône FA" style="flex:0 0 180px;background:var(--bg5);border:1px solid rgba(0,212,255,.15);color:var(--cyan);padding:8px 10px;border-radius:6px;font-size:.8rem;outline:none"/>
+        <button onclick="this.closest('.cy-card-block').remove()" class="btn btn-red btn-sm"><i class="fa-solid fa-times"></i></button>
+      </div>
+      <div class="fg2">
+        <div class="fg"><label>Titre</label><input class="cy-title" value="${esc(c.title||'')}"/></div>
+        <div class="fg"><label>Description</label><input class="cy-desc" value="${esc(c.desc||'')}"/></div>
+      </div>
+    </div>`).join('');
+}
+window.addCyCard = () => {
+  document.getElementById('cy-cards-ed').insertAdjacentHTML('beforeend',`
+    <div class="cy-card-block cy-block">
+      <div style="display:flex;justify-content:space-between;margin-bottom:10px">
+        <input class="cy-icon" value="fa-shield-halved" placeholder="Icône FA" style="flex:0 0 180px;background:var(--bg5);border:1px solid rgba(0,212,255,.15);color:var(--cyan);padding:8px 10px;border-radius:6px;font-size:.8rem;outline:none"/>
+        <button onclick="this.closest('.cy-card-block').remove()" class="btn btn-red btn-sm"><i class="fa-solid fa-times"></i></button>
+      </div>
+      <div class="fg2"><div class="fg"><label>Titre</label><input class="cy-title" value=""/></div><div class="fg"><label>Description</label><input class="cy-desc" value=""/></div></div>
+    </div>`);
+};
+
+// ── UI UTILITIES ─────────────────────────────────────────────
+window.showPanel = (name, btn) => {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(n => n.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  if (btn) btn.classList.add('active');
+  const titles = {
+    dashboard: 'Tableau de <span>bord</span>',
+    messages: 'Boîte de <span>réception</span>',
+    hero: 'Page d\'<span>accueil</span>',
+    profil: 'Mon <span>profil</span>',
+    services: 'Mes <span>services</span>',
+    cybersec: '<span>Cybersécurité</span>',
+    competences: 'Mes <span>compétences</span>',
+    realisations: 'Mes <span>réalisations</span>',
+    contact: 'Contact & <span>infos</span>',
+    apparence: '<span>Apparence</span>',
+    securite: '<span>Sécurité</span>',
+  };
+  document.getElementById('pageTitle').innerHTML = titles[name] || name;
+  document.getElementById('msgDetail').classList.remove('open');
+  if (window.innerWidth < 960) document.getElementById('sidebar').classList.remove('open');
+};
+
+window.toggleSidebar = () => document.getElementById('sidebar').classList.toggle('open');
+
+window.checkPwd = (v) => {
+  const fill = document.getElementById('pwd-fill');
+  let score = 0;
+  if (v.length >= 8) score += 25;
+  if (/[A-Z]/.test(v)) score += 25;
+  if (/[0-9]/.test(v)) score += 25;
+  if (/[^A-Za-z0-9]/.test(v)) score += 25;
+  fill.style.width = score + '%';
+  fill.style.background = score < 50 ? 'var(--red)' : score < 75 ? 'orange' : 'var(--green)';
+};
+
+window.previewColor = (type, val) => {
+  document.getElementById('col' + type.charAt(0).toUpperCase() + type.slice(1) + 'Hex').value = val;
+};
+window.syncColor = (inputId, val) => {
+  if (/^#[0-9a-fA-F]{6}$/.test(val)) document.getElementById(inputId).value = val;
+};
+
+// CONFIRM DIALOG
+let confirmCb = null;
+function openConfirm(title, text, cb) {
+  document.getElementById('confirmTitle').textContent = title;
+  document.getElementById('confirmText').textContent = text;
+  confirmCb = cb;
+  document.getElementById('confirmOverlay').classList.add('open');
+  document.getElementById('confirmOk').onclick = () => { closeConfirm(); cb(); };
+}
+window.closeConfirm = () => document.getElementById('confirmOverlay').classList.remove('open');
+
+// NOTIF TOAST
+window.notif = (msg, type = 'ok') => {
+  const t = document.getElementById('notifToast');
+  const icons = { ok: 'fa-check-circle', err: 'fa-circle-exclamation', info: 'fa-info-circle' };
+  t.innerHTML = `<i class="fa-solid ${icons[type]||'fa-info-circle'}"></i> ${msg}`;
+  t.className = 'show ' + type;
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.className = '', 3500);
+};
+
+// CONFIRM MARK
+function confirm2(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 3500);
+  notif('Sauvegardé avec succès !');
+}
+
+// BTN LOADING STATE
+async function btnSave(fnName, fn) {
+  try {
+    await fn();
+  } catch (e) {
+    notif('Erreur : ' + (e.message || e), 'err');
+    console.error(e);
+  }
+}
+
+// HELPERS
+function gV(id) { const el = document.getElementById(id); return el ? el.value : ''; }
+function setV(id, v) { const el = document.getElementById(id); if (el) el.value = v; }
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// CLOCK
+function startClock() {
+  const el = document.getElementById('tb-clock');
+  const update = () => {
+    el.textContent = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  };
+  update();
+  setInterval(update, 1000);
+}
+
+// ENTER on login
+document.getElementById('loginPwd').addEventListener('keydown', e => {
+  if (e.key === 'Enter') window.doLogin();
+});
+document.getElementById('loginEmail').addEventListener('keydown', e => {
+  if (e.key === 'Enter') window.doLogin();
+});
+
+</script>
+</body>
+</html>
