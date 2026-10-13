@@ -10,6 +10,7 @@
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#0E1127">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230E1127'/%3E%3Cpath d='M36 8 18 36h12l-4 20 20-30H34z' fill='%23F4894A'/%3E%3C/svg%3E">
+<link rel="alternate" hreflang="en" href="en.html"><link rel="alternate" hreflang="fr" href="index.html">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -95,7 +96,8 @@ form{display:grid;gap:14px;padding:28px;border-radius:22px;background:var(--pane
 label{display:grid;gap:6px;font-size:.88rem;color:var(--mute)}
 input,select,textarea{font:inherit;color:var(--txt);background:var(--ink);border:1px solid var(--line);border-radius:12px;padding:12px 14px;width:100%}
 input:focus,select:focus,textarea:focus{outline:none;border-color:var(--sig)}
-textarea{min-height:120px;resize:vertical}.hp{position:absolute;left:-9999px}
+textarea{min-height:120px;resize:vertical}.lg{font-weight:600;font-size:.88rem;padding:6px 12px;border:1px solid var(--line);border-radius:999px;color:var(--mute)}.lg:hover{color:var(--txt)}.nr{display:flex;gap:10px;align-items:center}
+.hp{position:absolute;left:-9999px}
 .row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 #fm{min-height:1.4em;font-size:.93rem}#fm.ok{color:var(--sig)}#fm.err{color:#ff8f8f}
 footer{border-top:1px solid var(--line);padding:32px 0;color:var(--mute);font-size:.9rem}
@@ -110,7 +112,7 @@ footer{border-top:1px solid var(--line);padding:32px 0;color:var(--mute);font-si
 <header><div class="w nv">
   <a class="logo" href="#top">David<em>.</em>Dansou</a>
   <ul><li><a href="#apropos">À propos</a></li><li><a href="#services">Services</a></li><li><a href="#projets">Projets</a></li><li><a href="#competences">Compétences</a></li></ul>
-  <a class="btn p" href="#contact">Me contacter</a>
+  <div class="nr"><a class="lg" href="en.html" hreflang="en">EN</a><a class="btn p" href="#contact">Me contacter</a></div>
 </div></header>
 
 <main id="top">
@@ -121,7 +123,7 @@ footer{border-top:1px solid var(--line);padding:32px 0;color:var(--mute);font-si
       <h1 id="h1"><span class="l1">Du courant dans les murs,</span><span class="l2">de la sécurité dans le code.</span></h1>
       <p class="sub">Je suis David Dansou, électricien bâtiment qualifié, développeur fullstack et spécialiste cybersécurité. Je cherche un poste, et je prends aussi des missions freelance.</p>
       <p class="role" aria-live="off"><b id="role">Installation électrique</b></p>
-      <div class="cta"><a class="btn p" href="#projets">Voir mes projets</a><a class="btn s" href="https://wa.me/2290142375751" target="_blank" rel="noopener">Écrire sur WhatsApp</a></div>
+      <div class="cta"><a class="btn p" href="#projets">Voir mes projets</a><a class="btn s" href="https://wa.me/2290142375751" target="_blank" rel="noopener">Écrire sur WhatsApp</a><a class="btn" href="CV_David_Dansou.pdf" download>Télécharger mon CV</a></div>
     </div>
     <div class="ph">
       <div class="pi"><b>DD</b><img src="david.jpg" alt="Portrait de David Dansou" onerror="this.remove()"></div>
@@ -181,6 +183,7 @@ footer{border-top:1px solid var(--line);padding:32px 0;color:var(--mute);font-si
         <a href="tel:+2290142375751">Appeler <small>+229 01 42 37 57 51</small></a>
         <a href="mailto:dansoudavid225@gmail.com">Email <small>dansoudavid225@gmail.com</small></a>
         <a href="https://github.com/dansoudavid225-eng" target="_blank" rel="noopener">GitHub <small>dansoudavid225-eng</small></a>
+        <a href="CV_David_Dansou.pdf" download>Mon CV <small>PDF, 1 page</small></a>
       </div>
       <form id="f" novalidate>
         <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
