@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>David Dansou — Electrician, fullstack developer & cybersecurity</title>
+<meta name="description" content="David Dansou, qualified building electrician, fullstack developer and cybersecurity specialist in Porto-Novo (Benin). Available for a job or freelance missions.">
+<meta property="og:title" content="David Dansou — Electrical work & cybersecurity">
+<meta property="og:description" content="Power in the walls, security in the code. Portfolio of David Dansou, Porto-Novo, Benin.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#0E1127">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230E1127'/%3E%3Cpath d='M36 8 18 36h12l-4 20 20-30H34z' fill='%23F4894A'/%3E%3C/svg%3E">
+<link rel="alternate" hreflang="en" href="en.html"><link rel="alternate" hreflang="fr" href="index.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+@property --a{syntax:'<angle>';initial-value:0deg;inherits:false}
+:root{--ink:#0E1127;--panel:#161A36;--panel2:#1D2244;--line:#ffffff1a;--txt:#ECEAF6;--mute:#A3A6C2;--cu:#F4894A;--sig:#4FE3D2}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--txt);font:400 1.05rem/1.65 'Instrument Sans',system-ui,sans-serif;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(60% 50% at 85% 0,#F4894A24,transparent),radial-gradient(50% 50% at 0 100%,#4FE3D21f,transparent)}
+h1,h2,h3{font-family:Unbounded,sans-serif;line-height:1.12;letter-spacing:-.02em}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid var(--sig);outline-offset:3px}
+.wire{position:fixed;left:22px;top:0;bottom:0;width:2px;background:var(--line);z-index:5}
+.wire i{display:block;width:100%;height:0;position:relative;background:linear-gradient(var(--cu),var(--sig)) 0 0/100% 100vh;box-shadow:0 0 14px #F4894A88}
+.wire i::after{content:'';position:absolute;left:-4px;bottom:-5px;width:10px;height:10px;border-radius:50%;background:#fff;box-shadow:0 0 16px 4px var(--sig)}
+.w{max-width:1120px;margin:0 auto;padding:0 24px 0 64px}
+header{position:sticky;top:0;z-index:10;background:#0E1127d9;backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.nv{display:flex;align-items:center;justify-content:space-between;height:64px}
+.logo{font:700 1.05rem Unbounded,sans-serif}.logo em{font-style:normal;color:var(--cu)}
+.nv ul{display:flex;gap:28px;list-style:none;padding:0;font-size:.95rem;color:var(--mute)}
+.nv ul a:hover{color:var(--txt)}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:999px;font-weight:600;font-size:.97rem;border:1px solid var(--line);background:var(--panel);cursor:pointer;color:var(--txt);font-family:inherit;transition:transform .2s,background .2s}
+.btn:hover{transform:translateY(-2px);background:var(--panel2)}
+.btn.p{background:var(--cu);color:#1a1020;border-color:var(--cu)}.btn.p:hover{background:#ff9a5f}
+.btn.s{background:var(--sig);color:#07201d;border-color:var(--sig)}.btn.s:hover{background:#7ff0e2}
+.hero{min-height:calc(100svh - 64px);display:grid;grid-template-columns:1.3fr .7fr;gap:48px;align-items:center;padding:56px 0}
+.pill{display:inline-flex;align-items:center;gap:10px;padding:6px 14px;border:1px solid var(--line);border-radius:999px;font-size:.88rem;color:var(--mute);margin-bottom:24px}
+.pill b{width:9px;height:9px;border-radius:50%;background:var(--sig);animation:pulse 1.8s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 #4FE3D299}100%{box-shadow:0 0 0 12px #4FE3D200}}
+h1{font-size:clamp(2rem,4.5vw,3.5rem);margin-bottom:22px}
+h1 .l1{color:var(--cu)}h1 .l2{color:var(--sig);display:block}
+h1 span span{display:inline-block;opacity:0;transform:translateY(.55em);animation:up .7s cubic-bezier(.2,.8,.2,1) forwards;animation-delay:calc(var(--i)*70ms)}
+@keyframes up{to{opacity:1;transform:none}}
+.sub{color:var(--mute);max-width:56ch;margin-bottom:20px}
+.role{font:500 1.1rem Unbounded,sans-serif;margin-bottom:30px;min-height:1.6em}
+.role b{font-weight:500;display:inline-block;animation:swap .5s ease both}
+@keyframes swap{from{opacity:0;transform:translateY(8px)}}
+.cta{display:flex;flex-wrap:wrap;gap:12px}
+.ph{position:relative;aspect-ratio:4/5;border-radius:30px;padding:3px;background:conic-gradient(from var(--a),var(--cu),var(--sig),var(--cu));animation:spin 7s linear infinite;max-width:360px;justify-self:center;width:100%}
+@keyframes spin{to{--a:360deg}}
+.pi{position:relative;width:100%;height:100%;border-radius:27px;overflow:hidden;background:var(--panel);display:grid;place-items:center}
+.pi b{font:700 4rem Unbounded,sans-serif;color:var(--line)}
+.pi img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.bd{position:absolute;padding:8px 14px;border-radius:12px;background:#0E1127ee;border:1px solid var(--line);font-size:.83rem;font-weight:600;animation:fl 5s ease-in-out infinite}
+.bd.a{left:-26px;bottom:18%;color:var(--cu)}.bd.b{right:-18px;top:12%;color:var(--sig);animation-delay:-2.5s}
+@keyframes fl{50%{transform:translateY(-9px)}}
+section{padding:96px 0;scroll-margin-top:64px}
+h2{font-size:clamp(1.55rem,3vw,2.2rem);margin-bottom:14px}
+.lead{color:var(--mute);max-width:62ch;margin-bottom:44px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start}
+.tl{list-style:none;padding:0 0 0 26px;border-left:2px solid var(--line)}
+.tl li{position:relative;padding-bottom:28px}
+.tl li::before{content:'';position:absolute;left:-33px;top:7px;width:12px;height:12px;border-radius:50%;background:var(--cu);box-shadow:0 0 12px var(--cu)}
+.tl li.c::before{background:var(--sig);box-shadow:0 0 12px var(--sig)}
+.tl time{font-size:.85rem;color:var(--mute)}.tl h3{font-size:1rem;margin:2px 0 4px}.tl p{font-size:.95rem;color:var(--mute)}
+.sv{padding:32px;border-radius:22px;background:var(--panel);border:1px solid var(--line)}
+.sv.e{border-top:3px solid var(--cu)}.sv.d{border-top:3px solid var(--sig)}
+.sv h3{font-size:1.2rem;margin-bottom:8px}.sv>p{color:var(--mute);margin-bottom:16px}
+.sv ul{padding-left:20px;display:grid;gap:6px}
+.sv.e li::marker{color:var(--cu)}.sv.d li::marker{color:var(--sig)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.card{border-radius:22px;background:var(--panel);border:1px solid var(--line);overflow:hidden;transition:transform .15s,border-color .3s;transform-style:preserve-3d;will-change:transform}
+.card:hover{border-color:#ffffff40}
+.mock{aspect-ratio:16/9;padding:14px;display:flex;flex-direction:column;gap:10px}
+.mock i{display:flex;gap:6px}.mock i s{width:9px;height:9px;border-radius:50%;background:#ffffff55}
+.mock div{flex:1;border-radius:10px;background:linear-gradient(135deg,#ffffff22,#ffffff08);position:relative;overflow:hidden}
+.mock div img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top}
+.mock div::after{content:'';position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,#ffffff2e 50%,transparent 70%);transform:translateX(-100%);animation:sh 4s infinite}
+@keyframes sh{60%,100%{transform:translateX(100%)}}
+.m1{background:linear-gradient(135deg,#1f4d36,#0f2a1e)}.m2{background:linear-gradient(135deg,#2c4fd0,#14224f)}.m3{background:linear-gradient(135deg,#4a5577,#1f2540)}.m4{background:linear-gradient(135deg,#b4572a,#4d2312)}
+.cb{padding:22px 26px 28px}.cb h3{font-size:1.15rem;margin-bottom:8px}.cb p{color:var(--mute);font-size:.97rem;margin-bottom:14px}
+.tags{display:flex;flex-wrap:wrap;gap:8px}
+.tags span,.chips span{padding:4px 12px;border-radius:999px;font-size:.82rem;background:var(--panel2);border:1px solid var(--line)}
+.cb a{display:inline-block;margin-top:16px;color:var(--sig);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 30px}
+.chips span{font-size:.92rem;padding:7px 16px;transition:.2s}
+.chips.e span:hover{border-color:var(--cu);color:var(--cu)}.chips.d span:hover{border-color:var(--sig);color:var(--sig)}
+.ct{display:grid;gap:12px;margin-top:8px}
+.ct a{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-radius:16px;background:var(--panel);border:1px solid var(--line);font-weight:600;transition:.2s}
+.ct a:hover{border-color:var(--sig);transform:translateX(6px)}.ct a small{font-weight:400;color:var(--mute)}
+form{display:grid;gap:14px;padding:28px;border-radius:22px;background:var(--panel);border:1px solid var(--line)}
+label{display:grid;gap:6px;font-size:.88rem;color:var(--mute)}
+input,select,textarea{font:inherit;color:var(--txt);background:var(--ink);border:1px solid var(--line);border-radius:12px;padding:12px 14px;width:100%}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--sig)}
+textarea{min-height:120px;resize:vertical}.lg{font-weight:600;font-size:.88rem;padding:6px 12px;border:1px solid var(--line);border-radius:999px;color:var(--mute)}.lg:hover{color:var(--txt)}.nr{display:flex;gap:10px;align-items:center}
+.hp{position:absolute;left:-9999px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+#fm{min-height:1.4em;font-size:.93rem}#fm.ok{color:var(--sig)}#fm.err{color:#ff8f8f}
+footer{border-top:1px solid var(--line);padding:32px 0;color:var(--mute);font-size:.9rem}
+.rv{opacity:0;transform:translateY(24px);transition:opacity .7s,transform .7s}.rv.in{opacity:1;transform:none}
+@media(max-width:860px){.hero,.two,.grid,.row{grid-template-columns:1fr}.hero{padding-top:32px}.nv ul{display:none}.ph{max-width:280px}}
+@media(max-width:760px){.w{padding:0 20px 0 44px}.wire{left:14px}section{padding:72px 0}.bd.a{left:-14px}.bd.b{right:-8px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}h1 span span,.rv{opacity:1;transform:none}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<div class="wire" aria-hidden="true"><i id="wf"></i></div>
+<header><div class="w nv">
+  <a class="logo" href="#top">David<em>.</em>Dansou</a>
+  <ul><li><a href="#apropos">About</a></li><li><a href="#services">Services</a></li><li><a href="#projets">Projects</a></li><li><a href="#competences">Skills</a></li></ul>
+  <div class="nr"><a class="lg" href="index.html" hreflang="fr">FR</a><a class="btn p" href="#contact">Contact me</a></div>
+</div></header>
+
+<main id="top">
+<div class="w">
+  <div class="hero">
+    <div>
+      <div class="pill"><b></b>Available now · Greater Cotonou & Porto-Novo</div>
+      <h1 id="h1"><span class="l1">Power in the walls,</span><span class="l2">security in the code.</span></h1>
+      <p class="sub">I'm David Dansou, a qualified building electrician, fullstack developer and cybersecurity specialist. I'm looking for a full-time role, and I also take freelance missions.</p>
+      <p class="role" aria-live="off"><b id="role">Electrical installation</b></p>
+      <div class="cta"><a class="btn p" href="#projets">See my projects</a><a class="btn s" href="https://wa.me/2290142375751" target="_blank" rel="noopener">Message me on WhatsApp</a><a class="btn" href="CV_David_Dansou_EN.pdf" download>Download my CV</a></div>
+    </div>
+    <div class="ph">
+      <div class="pi"><b>DD</b><img src="david.jpg" alt="Portrait of David Dansou" onerror="this.remove()"></div>
+      <span class="bd a">CQM-certified electrician</span><span class="bd b">D-CLIC / OIF cybersecurity</span>
+    </div>
+  </div>
+
+  <section id="apropos">
+    <div class="two">
+      <div>
+        <h2>Two trades, one standard</h2>
+        <p class="lead">I spent more than three years on building sites: switchboards, wiring, building installations. That trade taught me to check a connection before switching on the power. I apply the same discipline to code: I build complete web applications, then attack them myself to find the flaws before anyone else does.</p>
+        <p class="lead">I work on Kali Linux and speak French, Gun, Yoruba and English.</p>
+      </div>
+      <ul class="tl">
+        <li><time>2022 – 2025</time><h3>Building electrician</h3><p>Ets Divine Lumière Service Plus, first as an apprentice, then as an electrician.</p></li>
+        <li><time>April 2025</time><h3>CQM Building Electrician</h3><p>After the CAP in Electrical Work, the Bac F3 and the Technician diploma in Electrotechnics.</p></li>
+        <li class="c"><time>2026</time><h3>D-CLIC cybersecurity certification</h3><p>D-CLIC programme of the OIF, with the NGO RAIL Bénin.</p></li>
+        <li class="c"><time>2026</time><h3>Fullstack developer</h3><p>E-commerce platforms, stock management and a tontine app, with security audits.</p></li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="services">
+    <h2>What I can do for you</h2>
+    <p class="lead">A role in a company or a one-off mission: I adapt, in electrical work as in digital.</p>
+    <div class="grid">
+      <div class="sv e rv"><h3>Building electrical work</h3><p>For individuals and professionals.</p><ul><li>Electrical installation, new builds and renovation</li><li>Switchboards, wiring and lighting</li><li>Troubleshooting and maintenance</li></ul></div>
+      <div class="sv d rv"><h3>Development & cybersecurity</h3><p>For brands, shops and associations.</p><ul><li>Custom websites and web applications</li><li>Online shops with Mobile Money payment</li><li>OWASP security audit and vulnerability fixes</li></ul></div>
+    </div>
+  </section>
+
+  <section id="projets">
+    <h2>Projects</h2>
+    <p class="lead">Online applications, built end to end and tested for security.</p>
+    <div class="grid">
+      <article class="card rv"><div class="mock m1"><i><s></s><s></s><s></s></i><div><img src="img/tropicana.webp" alt="Home page of the Tropicana Pio Pio site" loading="lazy"></div></div><div class="cb"><h3>Tropicana Pio Pio</h3><p>Online shop for an artisanal herbal tea brand, with FedaPay Mobile Money payment, dark mode and a bilingual site. The security audit fixed 5 vulnerabilities, including a payment-status bypass.</p><div class="tags"><span>Next.js 15</span><span>Django 5</span><span>PostgreSQL</span><span>FedaPay</span></div><a href="https://tropicana-frontend.vercel.app" target="_blank" rel="noopener">Visit the site</a></div></article>
+      <article class="card rv"><div class="mock m2"><i><s></s><s></s><s></s></i><div><img src="img/jrc-tontines.webp" alt="Login page of JRC Tontines" loading="lazy"></div></div><div class="cb"><h3>JRC Tontines</h3><p>Tontine management platform for Ets JRC Services: cash desk, contribution cards and reports. Access is limited to the owner and authorised staff.</p><div class="tags"><span>Next.js</span><span>Supabase</span><span>Vercel</span></div><a href="https://jrc-tontines.vercel.app" target="_blank" rel="noopener">Visit the site</a></div></article>
+      <article class="card rv"><div class="mock m3"><i><s></s><s></s><s></s></i><div><img src="img/gestion-stock.webp" alt="Login page of Gestion de stock" loading="lazy"></div></div><div class="cb"><h3>Gestion de stock</h3><p>Product and margin tracking system for Tropicana Pio Pio: product photos, unit prices, active or inactive products.</p><div class="tags"><span>Django</span><span>Next.js</span><span>Supabase Storage</span><span>Railway</span></div><a href="https://gestion-stock-blush-eight.vercel.app" target="_blank" rel="noopener">Visit the site</a></div></article>
+      <article class="card rv"><div class="mock m4"><i><s></s><s></s><s></s></i><div><img src="img/artisan-nomade.webp" alt="Home page of the Artisan Nomade site" loading="lazy"></div></div><div class="cb"><h3>Artisan Nomade</h3><p>Mobile-first e-commerce shop, with a Supabase database and continuous deployment.</p><div class="tags"><span>Node.js</span><span>Supabase</span><span>Render</span></div><a href="https://artisan-nomade.vercel.app" target="_blank" rel="noopener">Visit the site</a></div></article>
+    </div>
+  </section>
+
+  <section id="competences">
+    <h2>Skills</h2>
+    <p class="lead">The tools I use every day, on site and in code.</p>
+    <div class="chips e"><span>Building electrical installation</span><span>Electrotechnics</span><span>Wiring and switchboards</span><span>Troubleshooting</span></div>
+    <div class="chips d"><span>Next.js / React</span><span>Django</span><span>Node.js</span><span>PostgreSQL</span><span>Supabase</span><span>Firebase</span><span>Vercel</span><span>JWT authentication</span><span>OWASP audit</span><span>Kali Linux</span><span>Mobile Money payments</span></div>
+  </section>
+
+  <section id="contact">
+    <h2>Let's talk about your needs</h2>
+    <p class="lead">A job offer, a building job or a web project: write to me through whichever channel suits you. I reply quickly.</p>
+    <div class="two">
+      <div class="ct">
+        <a href="https://wa.me/2290142375751" target="_blank" rel="noopener">WhatsApp <small>+229 01 42 37 57 51</small></a>
+        <a href="tel:+2290142375751">Call <small>+229 01 42 37 57 51</small></a>
+        <a href="mailto:dansoudavid225@gmail.com">Email <small>dansoudavid225@gmail.com</small></a>
+        <a href="https://github.com/dansoudavid225-eng" target="_blank" rel="noopener">GitHub <small>dansoudavid225-eng</small></a>
+        <a href="CV_David_Dansou_EN.pdf" download>My CV <small>PDF, 1 page</small></a>
+      </div>
+      <form id="f" novalidate>
+        <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <div class="row"><label>Name<input name="name" required autocomplete="name"></label><label>Phone<input name="phone" type="tel" autocomplete="tel"></label></div>
+        <label>Email<input name="email" type="email" required autocomplete="email"></label>
+        <label>Subject<select name="service"><option>Job offer</option><option>Electrical installation or repair</option><option>Website or web app</option><option>Security audit</option><option>Other</option></select></label>
+        <label>Message<textarea name="message" required></textarea></label>
+        <div class="cta"><button class="btn p" type="submit" id="sb">Send message</button><button class="btn s" type="button" id="wb">Send via WhatsApp</button></div>
+        <p id="fm" role="status"></p>
+      </form>
+    </div>
+  </section>
+</div>
+</main>
+<footer><div class="w">© 2026 David Dansou · Porto-Novo, Benin</div></footer>
+
+<script>
+const $=s=>document.querySelector(s),RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
+// Fil électrique : se remplit avec le scroll
+const wf=$('#wf');
+const prog=()=>{const h=document.documentElement;wf.style.height=Math.min(100,scrollY/Math.max(1,h.scrollHeight-innerHeight)*100)+'%'};
+addEventListener('scroll',prog,{passive:true});prog();
+// Titre : entrée mot par mot
+document.querySelectorAll('#h1 span').forEach(l=>{let i=+(l.classList.contains('l2'))*5;l.innerHTML=l.textContent.split(' ').map(w=>`<span style="--i:${i++}">${w}</span>`).join(' ')});
+// Rôles qui défilent
+const roles=['Electrical installation','Fullstack development','Security audit','Troubleshooting and maintenance'],rl=$('#role');let ri=0;
+if(!RM)setInterval(()=>{ri=(ri+1)%roles.length;rl.style.animation='none';rl.offsetWidth;rl.textContent=roles[ri];rl.style.animation=''},2400);
+// Apparition douce des blocs
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.15});
+document.querySelectorAll('.rv').forEach((el,i)=>{el.style.transitionDelay=(i%2)*90+'ms';io.observe(el)});
+// Inclinaison 3D des cartes projet
+if(!RM&&matchMedia('(hover:hover)').matches)document.querySelectorAll('.card').forEach(c=>{
+  c.addEventListener('pointermove',e=>{const r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;c.style.transform=`perspective(900px) rotateX(${-y*6}deg) rotateY(${x*7}deg) translateY(-4px)`});
+  c.addEventListener('pointerleave',()=>c.style.transform='')});
+// Formulaire
+const f=$('#f'),fm=$('#fm'),say=(t,m)=>{fm.className=t;fm.textContent=m};
+const read=()=>Object.fromEntries(new FormData(f));
+const valid=d=>d.name.trim()&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email)&&d.message.trim();
+f.addEventListener('submit',async e=>{
+  e.preventDefault();const d=read();if(d.website)return;
+  if(!valid(d))return say('err','Enter your name, a valid email and your message.');
+  const b=$('#sb');b.disabled=true;say('','Sending…');
+  try{
+    const r=await fetch('https://api.emailjs.com/api/v1.0/email/send',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({service_id:'service_c99szoa',template_id:'template_5boek87',user_id:'f2qKo6xDM68wIuqvS',template_params:{from_name:d.name,phone:d.phone,reply_to:d.email,service:d.service,message:d.message,date_envoi:new Date().toLocaleString('fr-FR')}})});
+    if(!r.ok)throw 0;say('ok','Message sent. I will reply shortly.');f.reset();
+  }catch{say('err','Sending failed. Use the WhatsApp button or write to dansoudavid225@gmail.com.')}
+  b.disabled=false;
+});
+$('#wb').addEventListener('click',()=>{
+  const d=read();if(!d.message.trim())return say('err','Write your message before sending it on WhatsApp.');
+  const t=`Hello David, this is ${d.name||'a portfolio visitor'}.\nSubject: ${d.service}\n${d.message}${d.phone?'\nMy number: '+d.phone:''}`;
+  open('https://wa.me/2290142375751?text='+encodeURIComponent(t),'_blank','noopener');
+});
+</script>
+</body>
+</html>
